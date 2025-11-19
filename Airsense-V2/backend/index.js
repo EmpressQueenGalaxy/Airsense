@@ -10,6 +10,7 @@
    ========================================================================== */
 
 const express = require("express");
+require("dotenv").config();
 const cors = require("cors");
 const path = require("path");
 const db = require("./basedatos");
@@ -338,7 +339,12 @@ process.on("unhandledRejection", (reason) => {
 // INICIALIZACIÓN DEL SERVIDOR
 // ==========================================================================
 
-// Inicia el servidor HTTP
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor backend iniciado en: http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor backend iniciado en local: http://localhost:${PORT}`);
+  });
+}
+
+// IMPORTANTE: Exportar la app para que Vercel la pueda ejecutar
+module.exports = app;
