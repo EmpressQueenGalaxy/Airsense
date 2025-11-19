@@ -338,22 +338,25 @@ app.listen(PORT, () => {
 // ==========================================================================
 // RUTA DE PÁGINA PRINCIPAL
 // ==========================================================================
+
 // 1. RUTA PRINCIPAL (/)
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/visor.html"));
 });
 
-// Ruta Comodín (cualquier otra cosa no definida va al visor)
-app.get('*', (req, res) => {
+// 2. RUTA COMODÍN (CORREGIDA)
+// ⚠️ El error que tenías era aquí. Cambiamos '*' por '/(.*)' 
+// Esto significa "Cualquier cosa que escriban después de la barra"
+app.get('/(.*)', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'visor.html'));
 });
 
-// 2. INICIAR SERVIDOR
+// 3. INICIAR SERVIDOR
 if (require.main === module) {
     app.listen(port, () => {
         console.log(`Servidor corriendo en puerto ${port}`);
     });
 }
 
-// 3. EXPORTAR APP (Para Vercel)
+// 4. EXPORTAR APP (Para Vercel)
 module.exports = app;
