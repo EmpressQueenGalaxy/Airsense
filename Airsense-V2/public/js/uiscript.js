@@ -3,7 +3,7 @@
    ==========================================================================*/
 
 // URL base de la API para todas las peticiones
-const API_BASE_URL = "https://airsense-v2.onrender.com/api"; 
+const API_BASE_URL = "/api"; 
 
 // ==========================================================================
 // REFERENCIAS DEL DOM
