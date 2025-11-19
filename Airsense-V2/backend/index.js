@@ -56,14 +56,7 @@ const PORT = process.env.PORT || 3000; //Usa variable de entorno PORT (producciÃ
 // CONFIGURACIÃ“N DE MIDDLEWARES
 // ==========================================================================
 //permite que el fronted haga peticiones al backend desde diferente origen
-app.use(cors({
-  origin: [
-    'http://127.0.0.1:5500', // Live Server suele usar esta IP
-    'http://localhost:5500', // O esta
-    'https://airsense-v3.vercel.app' // Tu dominio de Vercel
-  ]
-}));
-
+app.use(cors());                                            
 app.use(express.json());                                    //habilita el procesamiento de peticiones en formato JSON
 app.use('/api/health', healthRoutes);
 
