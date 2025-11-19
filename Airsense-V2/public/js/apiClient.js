@@ -6,7 +6,7 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 // 2. Definimos la URL base:
-//    - Local: http://localhost:4000/api
+//    - Local: http://localhost:3000/api
 //    - Vercel: /api
 const API_BASE_URL = isLocal 
   ? 'http://localhost:3000/api' 
@@ -33,7 +33,7 @@ async function apiClient(url, options = {}) {
     // AHORA SÍ: API_BASE_URL ya existe y funcionará
     const fullUrl = `${API_BASE_URL}${endpoint}`;
     
-    console.log(`📡 Fetching: ${fullUrl}`); // Útil para ver si apunta a 4000 o relativo
+    console.log(`📡 Fetching: ${fullUrl}`); // Útil para ver si apunta a 3000 o relativo
 
     const response = await fetch(fullUrl, options);
 
