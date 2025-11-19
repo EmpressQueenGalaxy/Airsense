@@ -4,10 +4,10 @@
   "description": "Sistema de visualización geoespacial de la calidad del aire en el valle del cauca (2011-2023)",
   "main": "index.js",
   "scripts": {
-    "start": "node backend/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx tailwindcss -i ./src/input.css -o ./public/estilo.css --minify",
-    "watch": "npx tailwindcss -i ./src/input.css -o ./public/estilo.css --watch"
+  "start": "node backend/index.js",
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "build": "npx tailwindcss -i ./input.css -o ./public/estilo.css --minify",
+  "watch": "npx tailwindcss -i ./input.css -o ./public/estilo.css --watch"
   },
   
   "keywords": [
