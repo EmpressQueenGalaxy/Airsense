@@ -46,6 +46,7 @@ const apiHandler = (controller, endpointName = "la ruta") => {
   };
 };
 
+
 /*Instancia principal de la aplicación Express
   Maneja todas las rutas y middlewares del servidor*/
 const app = express();
