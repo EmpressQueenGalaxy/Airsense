@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 /* ==========================================================================
+  Archivo fuente. Aquí Tailwind lee qué debe compilar.
+  input.css es el archivo donde Tailwind toma sus instrucciones (@tailwind base, components, utilities).
+  estilo.css es el archivo generado automáticamente que contiene todos los estilos finales que usa la página.
+   ========================================================================== */
+
+
+/* ==========================================================================
    1. ESTILOS GLOBALES Y DEL HEADER
    ========================================================================== */
 

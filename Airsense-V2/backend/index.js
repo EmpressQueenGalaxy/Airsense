@@ -55,7 +55,15 @@ const PORT = process.env.PORT || 3000; //Usa variable de entorno PORT (producci�
 // ==========================================================================
 // CONFIGURACIÓN DE MIDDLEWARES
 // ==========================================================================
-app.use(cors());                                            //permite que el fronted haga peticiones al backend desde diferente origen
+//permite que el fronted haga peticiones al backend desde diferente origen
+app.use(cors({
+  origin: [
+    'http://127.0.0.1:5500', // Live Server suele usar esta IP
+    'http://localhost:5500', // O esta
+    'https://airsense-v3.vercel.app' // Tu dominio de Vercel
+  ]
+}));
+
 app.use(express.json());                                    //habilita el procesamiento de peticiones en formato JSON
 app.use('/api/health', healthRoutes);
 
@@ -338,7 +346,13 @@ process.on("unhandledRejection", (reason) => {
 // INICIALIZACIÓN DEL SERVIDOR
 // ==========================================================================
 
-// Inicia el servidor HTTP
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor backend iniciado en: http://localhost:${PORT}`);
-});
+// Si estamos en local, escuchamos el puerto
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor backend iniciado en local: http://localhost:${PORT}`);
+  });
+}
+
+// IMPORTANTE: Exportar la app para que Vercel la pueda ejecutar
+module.exports = app;
