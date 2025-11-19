@@ -1,15 +1,16 @@
 /* ==========================================================================
-   CONFIGURACIÓN DE LA URL BASE (ESTO ES LO QUE TE FALTABA)
+   CONFIGURACIÓN DE LA URL BASE
    ========================================================================== */
 
-// 1. Detectamos si estamos en tu PC (localhost o 127.0.0.1)
+// 1. Detectamos si estamos en tu PC
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 // 2. Definimos la URL base:
-//    - Si es local: Apuntamos al puerto 4000 (donde corre tu backend Node.js)
-//    - Si es Vercel: Dejamos cadena vacía '' (para usar rutas relativas automáticas)
-const API_BASE_URL = isLocal ? 'http://localhost:4000' : '';
-
+//    - Local: http://localhost:4000/api
+//    - Vercel: /api
+const API_BASE_URL = isLocal 
+  ? 'http://localhost:4000/api' 
+  : '/api';
 
 /* ==========================================================================
    CLIENTE API
