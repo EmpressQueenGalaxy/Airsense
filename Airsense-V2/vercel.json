@@ -1,13 +1,14 @@
 {
   "version": 2,
-  "rewrites": [
-    {
-      "source": "/backend/(.*)",
-      "destination": "/backend/index.js"
-    },
-    {
-      "source": "/",
-      "destination": "/visor.html"
-    }
+  "builds": [
+    { "src": "backend/index.js", "use": "@vercel/node" },
+    { "src": "public/**/*", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/backend/index.js" },
+
+    { "src": "/", "dest": "/public/visor.html" },
+
+    { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
