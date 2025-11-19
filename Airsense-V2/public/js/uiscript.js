@@ -8,7 +8,6 @@ const API_BASE_URL = "https://airsense-v2.onrender.com/api";
 // ==========================================================================
 // REFERENCIAS DEL DOM
 // ==========================================================================
-
 const selectMunicipio = document.getElementById("selectMunicipio");
 const selectAnio = document.getElementById("selectAnio");
 const selectEstacion = document.getElementById("selectEstacion");
