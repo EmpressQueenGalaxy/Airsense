@@ -60,6 +60,14 @@ app.use(express.json());                                    //habilita el proces
 app.use('/api/health', healthRoutes);
 
 // ==========================================================================
+// RUTA DE PÁGINA PRINCIPAL
+// ==========================================================================
+// 1. RUTA PRINCIPAL (/)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/visor.html"));
+});
+
+// ==========================================================================
 // CONFIGURACIÓN DE MIDDLEWARES ESTÁTICOS 
 // ==========================================================================
 
@@ -334,29 +342,3 @@ process.on("unhandledRejection", (reason) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor backend iniciado en: http://localhost:${PORT}`);
 });
-
-// ==========================================================================
-// RUTA DE PÁGINA PRINCIPAL
-// ==========================================================================
-
-// 1. RUTA PRINCIPAL (/)
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/visor.html"));
-});
-
-// 2. RUTA COMODÍN (CORREGIDA)
-// ⚠️ El error que tenías era aquí. Cambiamos '*' por '/(.*)' 
-// Esto significa "Cualquier cosa que escriban después de la barra"
-app.get('/(.*)', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public', 'visor.html'));
-});
-
-// 3. INICIAR SERVIDOR
-if (require.main === module) {
-    app.listen(port, () => {
-        console.log(`Servidor corriendo en puerto ${port}`);
-    });
-}
-
-// 4. EXPORTAR APP (Para Vercel)
-module.exports = app;
