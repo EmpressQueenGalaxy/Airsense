@@ -60,16 +60,6 @@ app.use(express.json());                                    //habilita el proces
 app.use('/api/health', healthRoutes);
 
 // ==========================================================================
-// RUTA DE PÁGINA PRINCIPAL
-// ==========================================================================
-// 1. RUTA PRINCIPAL (/)
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/visor.html"));
-});
-
-// ... CÓDIGO DE MANEJO DE ERRORES GLOBALES ...
-
-// ==========================================================================
 // CONFIGURACIÓN DE MIDDLEWARES ESTÁTICOS 
 // ==========================================================================
 
@@ -344,3 +334,26 @@ process.on("unhandledRejection", (reason) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor backend iniciado en: http://localhost:${PORT}`);
 });
+
+// ==========================================================================
+// RUTA DE PÁGINA PRINCIPAL
+// ==========================================================================
+// 1. RUTA PRINCIPAL (/)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/visor.html"));
+});
+
+// Ruta Comodín (cualquier otra cosa no definida va al visor)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public', 'visor.html'));
+});
+
+// 2. INICIAR SERVIDOR
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Servidor corriendo en puerto ${port}`);
+    });
+}
+
+// 3. EXPORTAR APP (Para Vercel)
+module.exports = app;
