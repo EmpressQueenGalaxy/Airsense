@@ -9,7 +9,7 @@ const isLocal = window.location.hostname === 'localhost' || window.location.host
 //    - Local: http://localhost:4000/api
 //    - Vercel: /api
 const API_BASE_URL = isLocal 
-  ? 'http://localhost:4000/api' 
+  ? 'http://localhost:3000/api' 
   : '/api';
 
 /* ==========================================================================
