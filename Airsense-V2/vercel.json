@@ -20,6 +20,10 @@
       "dest": "/public/visor.html"
     },
     {
+      "src": "/(.*)\\.(css|js|png|jpg|svg|json|ico)$",
+      "dest": "/public/$1.$2"
+    },
+    {
       "src": "/(.*)",
       "dest": "/public/$1"
     }
