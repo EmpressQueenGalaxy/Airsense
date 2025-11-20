@@ -15,16 +15,14 @@ AirSense is a web application that visualizes historical air quality data across
 - Filters by municipality, year, and pollutant (contaminant).
 - Color-coded legend to interpret air quality levels.
 - Compound (pollutant) dictionary for non-technical users.
-- (Planned) User comments section for release #3.
-- User registration and login (Planned / Por definir).
 
 ---
 
 ## Tech Stack
-- **Frontend:** HTML, CSS, JavaScript, Leaflet.js  
+- **Frontend:** HTML, CSS, JavaScript, Leaflet.js, Tailwind CSS
 - **Backend:** Node.js, Express.js  
 - **Database:** PostgreSQL  
-- **Hosting (planned):** Render.com or Railway.app (free tier for MVP)
+- **Hosting:** Vercel
 
 ---
 
@@ -32,66 +30,83 @@ AirSense is a web application that visualizes historical air quality data across
 - Historical datasets: DAGMA, CVC, regional monitoring stations, public community sensors (all public datasets).  
 - Time range: 2011 — 2023.  
 - ~24 monitored chemical compounds across 10 municipalities.
+- **Official Data Source:** [Calidad Del Aire En Colombia - Promedio Anual](https://www.datos.gov.co/Ambiente-y-Desarrollo-Sostenible/Calidad-Del-Aire-En-Colombia-Promedio-Anual-/kekd-7v7h/about_data)
 
 ---
 
 ## Prerequisites (developers)
 > **Note:** Many environment-specific details are currently **Por definir**. This is a placeholder list until the project reaches implementation:
 
-- Git (to clone repository)  
-- Node.js (version: Por definir)  
-- Access credentials to the project database (the DB is pre-populated; connection details: Por definir)  
-- (Optional) PostgreSQL client tools for local queries (if needed)
+- **Git:** To clone the repository.
+- **Node.js:** Version 18.x or higher (recommended for stability and compatibility with project dependencies).
+- **Access credentials:** A `.env` file with database credentials is required to run the backend. Contact the team for access details.
+- (Optional) PostgreSQL client tools for local queries (if needed).
 
 ---
 
-## Installation (placeholder / generic)
-> These steps are a template. Replace or expand them when implementation details are defined.
+## Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/AirSense-Project/Airsense-V2.git
-```
+> **Important for local development:**  
+> This project is optimized for cloud deployment (Vercel/Render). Running it locally requires additional setup steps (like compiling Tailwind CSS) not needed in production.
 
-2. Install dependencies:
-```bash
-#\Airsense V2
-npm install
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/EmpressQueenGalaxy/Airsense.git  
+    ```
 
-3. Environment configuration:
-- Create a `.env` file.  
+2.  **Navigate to the project root and install dependencies:**
+    ```bash
+    cd Airsense
+    npm install
+    # Installs dependencies for the main project (including Tailwind if configured at root)
+    ```
 
-```bash
-#Airsense\backend
-DB_USER=postgres.czcidrooqhaxysxhxqbr
-DB_PASSWORD=contaminacionaire
-DB_HOST=aws-1-us-east-2.pooler.supabase.com
-DB_NAME=postgres
-DB_PORT=6543
-```
+3.  **Install Tailwind CSS dependencies (if not already installed at root):**
+    ```bash
+    # If step 2 didn't install Tailwind dependencies, run this in the project root:
+    npm install -D tailwindcss postcss autoprefixer
+    ```
 
-4. Start the development server:
-```bash
-#Airsense V2\backend
-cd backend
-node index.js
-#or
-node --watch index.js
-```
+4.  **Initialize Tailwind CSS (if `tailwind.config.js` is missing):**
+    ```bash
+    # Only run if `tailwind.config.js` does not exist in the project root
+    npx tailwindcss init -p
+    ```
+    *Note: The `tailwind.config.js` file should already be present and configured to watch files in `./public/**/*.{html,js}`.*
 
-5. Open the frontend in your browser (URL: Por definir or `http://localhost:PORT`).
+5.  **Compile the CSS:**
+    *This step generates the `estilo.css` file required by the frontend.*
+    ```bash
+    # Run from the project root (Airsense directory)
+    npx tailwindcss -i ./src/input.css -o ./public/estilo.css --minify
+    ```
 
----
+6.  **Environment configuration:**
+    - Create a `.env` file **in the `backend` subdirectory** (`Airsense/backend/.env`).
+    - Add your database credentials to the `.env` file:
 
-## Deployment / Hosting
-The project plans to use cloud hosting options suitable for Node.js backends and static frontends. Current candidate providers for the backend are:
+    ```bash
+    # Example .env file content (replace with actual credentials if different)
+    DB_USER=postgres.czcidrooqhaxysxhxqbr
+    DB_PASSWORD=contaminacionaire
+    DB_HOST=aws-1-us-east-2.pooler.supabase.com
+    DB_NAME=postgres
+    DB_PORT=6543
+    ```
 
-- **Render.com** (free tier available for hobby projects)  
-- **Railway.app** (free tier available for small apps)
+7.  **Start the development server:**
+    ```bash
+    # Navigate to the backend directory
+    cd backend
+    node index.js
+    # or
+    node --watch index.js # Automatically restarts the server on code changes
+    ```
 
-Frontend can be served from the same host or from static hosting (Por definir). Example production URL will be added once deployed (e.g. `https://airsense.onrender.com`).
-
+8.  **Open the frontend in your browser:**
+    - The backend server will typically run on `http://localhost:3000` (or another port specified by your `index.js`).
+    - Open your browser and navigate to the URL where the backend server is running (e.g., `http://localhost:3000`).
+  
 ---
 
 ## Usage (end user)
@@ -100,44 +115,6 @@ Frontend can be served from the same host or from static hosting (Por definir). 
   - Use filters (municipality, year, pollutant)
   - Read the compound dictionary
   - Interpret the color legend to assess air quality
-
----
-
-## Contributing
-**Contribution guidelines:** Por definir.  
-Until defined, please reach out to project maintainers (team members listed below) before opening significant pull requests.
-
-Basic suggested workflow (to be formalized later):
-1. Fork repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit changes with clear messages
-4. Open a Pull Request to `main` with a description of changes
-
----
-
-## Deployment / Hosting
-The project is hosted on Render.com.
-
-### Render Configuration
-
-**Build & Deploy**
-* **Repository:** `https://github.com/AirSense-Project/Airsense-V3.git`
-* **Branch:** The deployment branch (e.g., `main` or `develop`)
-* **Root Directory:** `Airsense-V3` (Adjust if the app is in a subdirectory)
-* **Build Command:** `npm install && npm run build`
-* **Start Command:** `npm start`
-* **Auto-Deploy:** On Commit
-
-> **Note on "Git Credentials":** You do not need to set Git credentials. By connecting your GitHub/GitLab account to Render, Render automatically gets permission to access the repository.
-
-**Environment (Environment Variables)**
-*These variables must be configured in the "Environment" tab on Render. Ask for the values through a secure channel.*
-
-
-## Roadmap
-- **Release 1 (MVP):** Map + station markers + filters by municipality/year/compound + legend + compound dictionary.  
-- **Release 2:** Auth (registration/login) and improved analytics.  
-- **Release 3:** User comments / feedback system (Planned).
 
 ---
 
@@ -155,4 +132,4 @@ This project is released under the **MIT License**. See the `LICENSE` file for d
 ---
 
 ## Contact
-For questions or collaboration, contact the project team. (LinkedIn & emails: Por definir)
+For questions or collaboration, contact the project team at: **airsenseproyecto@gmail.com**
