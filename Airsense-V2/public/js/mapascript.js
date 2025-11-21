@@ -137,7 +137,6 @@ function crearPopupInteractivo(est, anio) {
 //Actualiza la información
 function actualizarInfoBox(estaciones, anio) {
   limpiarInfoBox();
-
   infoBoxControl = L.control({ position: "bottomright" });
 
   infoBoxControl.onAdd = function () {
