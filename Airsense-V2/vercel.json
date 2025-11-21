@@ -1,11 +1,15 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static",
+      "config": {
+        "distDir": "public"
+      }
+    }
+  ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/backend/index.js" },
-    { "src": "/(js|images|css)/(.*)", "dest": "/public/$1/$2" },
-    { "src": "/(.*\\.css)", "dest": "/public/$1" },
-    { "src": "/(.*\\.js)", "dest": "/public/$1" },
-    { "src": "/", "dest": "/public/visor.html" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
