@@ -82,10 +82,6 @@ function handleNavClick(event) {
   });
   // Añade la clase 'nav-active' SOLO al enlace que se presionó
   event.currentTarget.classList.add('nav-active');
-  // Desbloquear después del scroll automático (~0.8s)
-  setTimeout(() => {
-    bloqueoScroll = false;
-  }, 800);
 
 }
 
