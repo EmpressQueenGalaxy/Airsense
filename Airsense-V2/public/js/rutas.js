@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSENSE - LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
+   AIRSENSE rutas.js- LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
    ==========================================================================
    Gestiona:
    1. El carrusel de imágenes y texto de la sección de inicio.
@@ -77,9 +77,11 @@ function handleNavClick(event) {
   // Quita la clase 'nav-active' de TODOS los enlaces
   navLinks.forEach(link => {
     link.classList.remove('nav-active');
+    link.removeAttribute('aria-current');
   });
   // Añade la clase 'nav-active' SOLO al enlace que se presionó
   event.currentTarget.classList.add('nav-active');
+  event.currentTarget.setAttribute('aria-current', 'true');
 }
 
 // Asigna la función de clic a CADA enlace
@@ -117,12 +119,14 @@ const observerCallback = (entries, observer) => {
       // Quita la clase 'nav-active' de TODOS los enlaces
       navLinks.forEach(link => {
         link.classList.remove('nav-active');
+        link.removeAttribute('aria-current');
       });
 
       // Busca el enlace que corresponde a esta sección y añádele la clase
       const activeLink = document.querySelector(`.nav a[href="#${id}"]`);
       if (activeLink) {
         activeLink.classList.add('nav-active');
+        activeLink.setAttribute('aria-current', 'true');
       }
     }
   });
