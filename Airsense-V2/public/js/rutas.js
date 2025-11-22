@@ -73,17 +73,18 @@ const navLinks = document.querySelectorAll('.nav a');
 // -----------------------------------------------------
 // --- LÓGICA DE CLIC (Para respuesta inmediata) ---
 // -----------------------------------------------------
-
 function handleNavClick(event) {
-  bloqueoScroll = true; // Bloquea el observer mientras se hace scroll automático
-  // Quita la clase 'nav-active' de TODOS los enlaces
-  navLinks.forEach(link => {
-    link.classList.remove('nav-active');
-  });
-  // Añade la clase 'nav-active' SOLO al enlace que se presionó
+  bloqueoScroll = true; // Evita que el observer sobrescriba el menú
+
+  navLinks.forEach(link => link.classList.remove('nav-active'));
   event.currentTarget.classList.add('nav-active');
 
+  // Espera a que termine el scroll automático y reactiva el observer
+  setTimeout(() => {
+    bloqueoScroll = false;
+  }, 800);
 }
+
 
 // Asigna la función de clic a CADA enlace
 navLinks.forEach(link => {
@@ -111,19 +112,15 @@ const observerOptions = {
 };
 
 // 4. Función que se ejecuta cuando una sección entra o sale de la vista
-const observerCallback = (entries, observer) => {
-  if (bloqueoScroll) return; // Si hubo clic reciente, NO tocar el menú  
+const observerCallback = (entries) => {
+  if (bloqueoScroll) return; // Detiene el observer cuando el usuario hace clic
+
   entries.forEach(entry => {
-    // Si la sección está (al menos 50%) visible
     if (entry.isIntersecting) {
       const id = entry.target.id;
-      
-      // Quita la clase 'nav-active' de TODOS los enlaces
-      navLinks.forEach(link => {
-        link.classList.remove('nav-active');
-      });
 
-      // Busca el enlace que corresponde a esta sección y añádele la clase
+      navLinks.forEach(link => link.classList.remove('nav-active'));
+
       const activeLink = document.querySelector(`.nav a[href="#${id}"]`);
       if (activeLink) {
         activeLink.classList.add('nav-active');
@@ -131,6 +128,7 @@ const observerCallback = (entries, observer) => {
     }
   });
 };
+
 
 // 5. Crear y activar el observador
 const observer = new IntersectionObserver(observerCallback, observerOptions);
