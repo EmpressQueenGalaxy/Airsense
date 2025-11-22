@@ -68,20 +68,31 @@ showSlide(current);
 
 // 1. Obtener todos los enlaces de la navegación principal
 const navLinks = document.querySelectorAll('.nav a');
+let userClicked = false; // <-- Evita que el observer sobrescriba un clic reciente
+let clickTimeout;
+
+// Función que activa un enlace y desactiva los demás
+function activateLink(link) {
+  navLinks.forEach(l => {
+    l.classList.remove('nav-active');
+    l.removeAttribute('aria-current');
+  });
+  link.classList.add('nav-active');
+  link.setAttribute('aria-current', 'true');
+}
 
 // -----------------------------------------------------
 // --- LÓGICA DE CLIC (Para respuesta inmediata) ---
 // -----------------------------------------------------
 
 function handleNavClick(event) {
-  // Quita la clase 'nav-active' de TODOS los enlaces
-  navLinks.forEach(link => {
-    link.classList.remove('nav-active');
-    link.removeAttribute('aria-current');
-  });
-  // Añade la clase 'nav-active' SOLO al enlace que se presionó
-  event.currentTarget.classList.add('nav-active');
-  event.currentTarget.setAttribute('aria-current', 'true');
+  const link = event.currentTarget;
+  activateLink(link);
+
+  // Bloquea temporalmente el observer
+  userClicked = true;
+  clearTimeout(clickTimeout);
+  clickTimeout = setTimeout(() => { userClicked = false; }, 1000);
 }
 
 // Asigna la función de clic a CADA enlace
@@ -96,38 +107,24 @@ navLinks.forEach(link => {
 
 // 2. Obtener todas las secciones a las que los enlaces apuntan
 const sections = Array.from(navLinks)
-  .map(link => {
-    const id = link.getAttribute('href').substring(1); // 'href' es "#inicio", 'id' es "inicio"
-    return document.getElementById(id);
-  })
-  .filter(section => section !== null); // Filtra enlaces que no tengan una sección válida
+  .map(link => document.getElementById(link.getAttribute('href').substring(1)))
+  .filter(section => section !== null);
 
-// 3. Opciones para el observador
 const observerOptions = {
-  root: null, // Observa en relación al viewport (la ventana del navegador)
+  root: null,
   rootMargin: '0px',
-  threshold: 0.5 // Se activa cuando el 50% de la sección está visible
+  threshold: 0.5
 };
 
 // 4. Función que se ejecuta cuando una sección entra o sale de la vista
-const observerCallback = (entries, observer) => {
+const observerCallback = (entries) => {
+  if (userClicked) return; // Ignora si hubo un clic reciente
+
   entries.forEach(entry => {
-    // Si la sección está (al menos 50%) visible
     if (entry.isIntersecting) {
       const id = entry.target.id;
-      
-      // Quita la clase 'nav-active' de TODOS los enlaces
-      navLinks.forEach(link => {
-        link.classList.remove('nav-active');
-        link.removeAttribute('aria-current');
-      });
-
-      // Busca el enlace que corresponde a esta sección y añádele la clase
       const activeLink = document.querySelector(`.nav a[href="#${id}"]`);
-      if (activeLink) {
-        activeLink.classList.add('nav-active');
-        activeLink.setAttribute('aria-current', 'true');
-      }
+      if (activeLink) activateLink(activeLink);
     }
   });
 };
@@ -136,6 +133,4 @@ const observerCallback = (entries, observer) => {
 const observer = new IntersectionObserver(observerCallback, observerOptions);
 
 // 6. Decirle al observador qué secciones debe "vigilar"
-sections.forEach(section => {
-  observer.observe(section);
-});
+sections.forEach(section => { observer.observe(section);});
