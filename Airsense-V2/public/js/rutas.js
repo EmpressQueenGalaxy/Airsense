@@ -27,12 +27,15 @@ let current = 0;
  */
 function showSlide(index) {
   slides.forEach((slide, i) => {
-    slide.classList.toggle('active', i === index);
-    dots[i].classList.toggle('active', i === index);
-    dots[i].setAttribute('aria-selected', i === index);
+    slide.classList.toggle("active", i === index);
   });
+
+  dots.forEach((dot, i) => {
+    dot.classList.toggle("active", i === index);
+    dot.setAttribute("aria-selected", i === index);
+  });
+
   textElement.textContent = texts[index];
-  
 }
 
 // Avanza al siguiente slide, volviendo al primero si llega al final.
@@ -78,7 +81,7 @@ function activateLink(link) {
     l.removeAttribute('aria-current');
   });
   link.classList.add('nav-active');
-  link.setAttribute('aria-current', 'true');
+  link.setAttribute('aria-current', 'page');
 }
 
 // -----------------------------------------------------
@@ -86,11 +89,11 @@ function activateLink(link) {
 // -----------------------------------------------------
 
 function handleNavClick(event) {
+  userClicked = true;
   const link = event.currentTarget;
   activateLink(link);
 
   // Bloquea temporalmente el observer
-  userClicked = true;
   clearTimeout(clickTimeout);
   clickTimeout = setTimeout(() => { userClicked = false; }, 1000);
 }
