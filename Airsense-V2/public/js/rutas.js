@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSENSE - LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
+   AIRSENSE rutas.js - LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
    ==========================================================================
    Gestiona:
    1. El carrusel de imágenes y texto de la sección de inicio.
@@ -20,6 +20,7 @@ const texts = [
 ];
 
 let current = 0;
+let bloqueoScroll = false;
 
 /**
  * Muestra un slide específico basado en su índice.
@@ -74,12 +75,18 @@ const navLinks = document.querySelectorAll('.nav a');
 // -----------------------------------------------------
 
 function handleNavClick(event) {
+  bloqueoScroll = true; // Bloquea el observer mientras se hace scroll automático
   // Quita la clase 'nav-active' de TODOS los enlaces
   navLinks.forEach(link => {
     link.classList.remove('nav-active');
   });
   // Añade la clase 'nav-active' SOLO al enlace que se presionó
   event.currentTarget.classList.add('nav-active');
+  // Desbloquear después del scroll automático (~0.8s)
+  setTimeout(() => {
+    bloqueoScroll = false;
+  }, 800);
+
 }
 
 // Asigna la función de clic a CADA enlace
@@ -109,6 +116,7 @@ const observerOptions = {
 
 // 4. Función que se ejecuta cuando una sección entra o sale de la vista
 const observerCallback = (entries, observer) => {
+  if (bloqueoScroll) return; // Si hubo clic reciente, NO tocar el menú  
   entries.forEach(entry => {
     // Si la sección está (al menos 50%) visible
     if (entry.isIntersecting) {

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSENSE - MÓDULO DE DICCIONARIO DE CONTAMINANTES
+   AIRSENSE - MÓDULO DE DICCIONARIO DE CONTAMINANTES (Mapa.html)
    ==========================================================================
    Gestiona la carga, renderizado y navegación del diccionario de
    contaminantes atmosféricos en un panel lateral interactivo,

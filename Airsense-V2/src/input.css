@@ -162,11 +162,27 @@
   font-weight: 600;
   transition: background-color 0.3s, transform 0.2s;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+
+  display: inline-block;     /* evita que se estire raro */
+  white-space: nowrap;       /* evita que el texto se parta */
+  max-width: 100%;           /* evita que se deforme */
 }
 
 .btn:hover {
   background-color: #14532d; /* Verde más oscuro */
   transform: scale(1.05);
+}
+
+/* Ajustes en pantallas pequeñas */
+@media (max-width: 480px) {
+  .btn {
+    font-size: 0.9rem;
+    padding: 0.7rem 1.2rem;
+  }
+}
+
+.centrado {
+  text-align: center;
 }
 
 /* --- Flechas de navegación (Izquierda/Derecha) --- */
