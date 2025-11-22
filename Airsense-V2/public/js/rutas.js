@@ -81,7 +81,7 @@ function activateLink(link) {
     l.removeAttribute('aria-current');
   });
   link.classList.add('nav-active');
-  link.setAttribute('aria-current', 'page');
+  link.setAttribute('aria-current', 'location');
 }
 
 // -----------------------------------------------------
