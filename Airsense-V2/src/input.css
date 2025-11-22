@@ -74,6 +74,10 @@
   color: #ffeb3b; /* Mantener color al pasar el mouse */
 }
 
+section, div[id] { /* Aplica a secciones y divs con ID (como mapa o datos) */
+  scroll-margin-top: 100px; /* Espacio para que el menú no tape el título */
+}
+
 /* ==========================================================================
    2. SECCIÓN: CARRUSEL DE INICIO (#inicio)
    ========================================================================== */
