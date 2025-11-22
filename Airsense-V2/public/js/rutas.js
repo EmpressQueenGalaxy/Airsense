@@ -115,8 +115,8 @@ const sections = Array.from(navLinks)
 
 const observerOptions = {
   root: null,
-  rootMargin: '0px',
-  threshold: 0.5
+  rootMargin: '-40% 0px -50% 0px',
+  threshold: 0
 };
 
 // 4. Función que se ejecuta cuando una sección entra o sale de la vista
