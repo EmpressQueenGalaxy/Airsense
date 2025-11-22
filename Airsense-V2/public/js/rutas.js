@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSENSE rutas.js - LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
+   AIRSENSE rutas.js- LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
    ==========================================================================
    Gestiona:
    1. El carrusel de imágenes y texto de la sección de inicio.
@@ -20,7 +20,6 @@ const texts = [
 ];
 
 let current = 0;
-let bloqueoScroll = false;
 
 /**
  * Muestra un slide específico basado en su índice.
@@ -73,18 +72,17 @@ const navLinks = document.querySelectorAll('.nav a');
 // -----------------------------------------------------
 // --- LÓGICA DE CLIC (Para respuesta inmediata) ---
 // -----------------------------------------------------
+
 function handleNavClick(event) {
-  bloqueoScroll = true; // Evita que el observer sobrescriba el menú
-
-  navLinks.forEach(link => link.classList.remove('nav-active'));
+  // Quita la clase 'nav-active' de TODOS los enlaces
+  navLinks.forEach(link => {
+    link.classList.remove('nav-active');
+    link.removeAttribute('aria-current');
+  });
+  // Añade la clase 'nav-active' SOLO al enlace que se presionó
   event.currentTarget.classList.add('nav-active');
-
-  // Espera a que termine el scroll automático y reactiva el observer
-  setTimeout(() => {
-    bloqueoScroll = false;
-  }, 800);
+  event.currentTarget.setAttribute('aria-current', 'true');
 }
-
 
 // Asigna la función de clic a CADA enlace
 navLinks.forEach(link => {
@@ -112,23 +110,27 @@ const observerOptions = {
 };
 
 // 4. Función que se ejecuta cuando una sección entra o sale de la vista
-const observerCallback = (entries) => {
-  if (bloqueoScroll) return; // Detiene el observer cuando el usuario hace clic
-
+const observerCallback = (entries, observer) => {
   entries.forEach(entry => {
+    // Si la sección está (al menos 50%) visible
     if (entry.isIntersecting) {
       const id = entry.target.id;
+      
+      // Quita la clase 'nav-active' de TODOS los enlaces
+      navLinks.forEach(link => {
+        link.classList.remove('nav-active');
+        link.removeAttribute('aria-current');
+      });
 
-      navLinks.forEach(link => link.classList.remove('nav-active'));
-
+      // Busca el enlace que corresponde a esta sección y añádele la clase
       const activeLink = document.querySelector(`.nav a[href="#${id}"]`);
       if (activeLink) {
         activeLink.classList.add('nav-active');
+        activeLink.setAttribute('aria-current', 'true');
       }
     }
   });
 };
-
 
 // 5. Crear y activar el observador
 const observer = new IntersectionObserver(observerCallback, observerOptions);
