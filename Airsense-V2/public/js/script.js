@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CONFIGURACIÓN INICIAL DEL MAPA
+   CONFIGURACIÓN INICIAL DEL MAPA script.js
    ==========================================================================
    Este bloque inicializa el mapa de Leaflet centrado en el Valle del Cauca,
    define las capas base (modo claro y oscuro), y configura las referencias
