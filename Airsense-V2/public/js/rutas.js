@@ -85,16 +85,16 @@ function activateLink(link) {
 // -----------------------------------------------------
 
 function handleNavClick(event) {
-  // Quita la clase 'nav-active' de TODOS los enlaces
-  navLinks.forEach(link => {
-    link.classList.remove('nav-active');
-  });
-  // Añade la clase 'nav-active' SOLO al enlace que se presionó
-  event.currentTarget.classList.add('nav-active');
-  setTimeout(() => userClicked = false, 300);
+  userClicked = true; // ← CORRECCIÓN CLAVE
+
+  activateLink(event.currentTarget);
+
+  // desactivar protección tras un lapso
+  setTimeout(() => { 
+    userClicked = false;
+  }, 800); // ← tiempo ideal para evitar solapamiento
 }
 
-// Asigna la función de clic a CADA enlace
 navLinks.forEach(link => {
   link.addEventListener('click', handleNavClick);
 });
@@ -106,17 +106,14 @@ navLinks.forEach(link => {
 
 // 2. Obtener todas las secciones a las que los enlaces apuntan
 const sections = Array.from(navLinks)
-  .map(link => {
-    const id = link.getAttribute('href').substring(1); // 'href' es "#inicio", 'id' es "inicio"
-    return document.getElementById(id);
-  })
-  .filter(section => section !== null); // Filtra enlaces que no tengan una sección válida
-
+  .map(link => document.getElementById(link.getAttribute('href').substring(1)))
+  .filter(section => section !== null);
+  
 // 3. Opciones para el observador
 const observerOptions = {
   root: null, // Observa en relación al viewport (la ventana del navegador)
   rootMargin: '0px',
-  threshold: 0.5
+  threshold: 0.55
 };
 
 // 4. Función que se ejecuta cuando una sección entra o sale de la vista
