@@ -74,10 +74,6 @@
   color: #ffeb3b; /* Mantener color al pasar el mouse */
 }
 
-section, div[id] { /* Aplica a secciones y divs con ID (como mapa o datos) */
-  scroll-margin-top: 100px; /* Espacio para que el menú no tape el título */
-}
-
 /* ==========================================================================
    2. SECCIÓN: CARRUSEL DE INICIO (#inicio)
    ========================================================================== */
@@ -259,7 +255,8 @@ html {
   padding: 5rem 1rem;
   text-align: center;
   /* Asegura que las secciones ancladas no queden tapadas por el header fijo */
-  scroll-margin-top: 100px;
+  scroll-margin-top: 80px;
+  min-height: 1px;
 }
 
 .section h2 {
