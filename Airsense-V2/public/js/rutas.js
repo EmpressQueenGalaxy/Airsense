@@ -1,9 +1,5 @@
 /* ==========================================================================
-   AIRSENSE rutas.js- LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
-   ==========================================================================
-   Gestiona:
-   1. El carrusel de imágenes y texto de la sección de inicio.
-   2. El resaltado de la navegación principal al hacer scroll (Intersection Observer).
+   AIRSENSE rutas.js - LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,8 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const textElement = document.getElementById('slide-text');
 
   // Botones de control (verificamos si existen antes de usarlos)
-    const nextBtn = document.getElementById('next');
-    const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const prevBtn = document.getElementById('prev');
 
   const texts = [
     "¿Sabías que en Colombia mueren más de 17.000 personas cada año por culpa del aire que respiran?",
@@ -28,9 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /**
    * Muestra un slide específico basado en su índice.
-   * @param {number} index - El índice (0, 1, 2) del slide a mostrar.
    */
   function showSlide(index) {
+    if (slides.length === 0) return;
+
     slides.forEach((slide, i) => {
       slide.classList.toggle("active", i === index);
     });
@@ -40,17 +37,19 @@ document.addEventListener('DOMContentLoaded', () => {
       dot.setAttribute("aria-selected", i === index);
     });
 
-    textElement.textContent = texts[index];
+    if (textElement) {
+      textElement.textContent = texts[index];
+    }
   }
 
-  // Avanza al siguiente slide, volviendo al primero si llega al final.
   function nextSlide() {
+    if (slides.length === 0) return;
     current = (current + 1) % slides.length;
     showSlide(current);
   }
 
-  // Retrocede al slide anterior, yendo al último si estaba en el primero.
   function prevSlide() {
+    if (slides.length === 0) return;
     current = (current - 1 + slides.length) % slides.length;
     showSlide(current);
   }
@@ -72,17 +71,21 @@ document.addEventListener('DOMContentLoaded', () => {
     showSlide(current); // Mostrar la primera diapositiva al cargar
   }
 
+
   /* =====================================================
-      MÓDULO: NAVEGACIÓN ACTIVA POR SCROLL
+     MÓDULO: NAVEGACIÓN ACTIVA POR SCROLL
   ====================================================== */
 
   // Buscar enlaces DENTRO del .nav o etiquetas <nav>
   const navLinks = document.querySelectorAll('.nav a, nav a');
+  
   let userClicked = false; // <-- Evita que el observer sobrescriba un clic reciente
   let clickTimeout;
 
   // Función que activa un enlace y desactiva los demás
   function activateLink(link) {
+    if (!link) return;
+
     navLinks.forEach(l => {
       l.classList.remove('nav-active');
       l.removeAttribute('aria-current');
@@ -92,17 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -----------------------------------------------------
-  // --- LÓGICA DE CLIC (Para respuesta inmediata) ---
+  // --- LÓGICA DE CLIC (CORREGIDA PARA TU PROBLEMA) ---
   // -----------------------------------------------------
 
   function handleNavClick(event) {
+    // 1. Avisamos que fue un clic manual
     userClicked = true;
+    
     const link = event.currentTarget;
-    activateLink(link);
+    activateLink(link); // Cambiamos color inmediatamente
 
-    // Bloquea temporalmente el observer
-    clearTimeout(clickTimeout);
-    clickTimeout = setTimeout(() => { userClicked = false; }, 1000);
+    // 2. Reiniciamos el timer si hubo clics rápidos
+    if (clickTimeout) clearTimeout(clickTimeout);
+
+    // 3. CAMBIO CLAVE: Aumentamos a 1500ms (1.5 segundos).
+    // Esto da tiempo a que la página baje hasta "Datos" sin que
+    // el detector se despierte antes de tiempo al pasar por "Mapa".
+    clickTimeout = setTimeout(() => { 
+      userClicked = false; 
+    }, 1500); 
   }
 
   // Asigna la función de clic a CADA enlace
@@ -129,13 +140,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const observerOptions = {
     root: null,
-    rootMargin: '-15% 0px -60% 0px',
+    // CAMBIO CLAVE: Ajustado a -10% arriba.
+    // Esto hace que la sección se active apenas el título toca la zona superior,
+    // ayudando a que "Datos" se fije mejor.
+    rootMargin: '-10% 0px -60% 0px',
     threshold: 0
   };
 
   // Función Callback del Observer
   const observerCallback = (entries) => {
-    if (userClicked) return; // Ignora si hubo un clic reciente
+    // Si el usuario hizo clic hace poco, NO hacemos nada (respetamos el clic)
+    if (userClicked) return; 
 
     entries.forEach(entry => {
       if (entry.isIntersecting) {
