@@ -82,7 +82,7 @@
 .carousel {
   position: relative;
   width: 100%;
-  height: 100vh; /* Altura de pantalla completa */
+  height: calc(100vh - 80px); /* 80px es el header */
   overflow: hidden;
   background: transparent;
 }
