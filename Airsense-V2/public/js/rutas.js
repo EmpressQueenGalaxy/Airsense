@@ -108,12 +108,12 @@ navLinks.forEach(link => {
 const sections = Array.from(navLinks)
   .map(link => document.getElementById(link.getAttribute('href').substring(1)))
   .filter(section => section !== null);
-  
+
 // 3. Opciones para el observador
 const observerOptions = {
   root: null, // Observa en relación al viewport (la ventana del navegador)
-  rootMargin: '0px',
-  threshold: 0.55
+  rootMargin: '-20% 0px -55% 0px',
+  threshold: 0
 };
 
 // 4. Función que se ejecuta cuando una sección entra o sale de la vista

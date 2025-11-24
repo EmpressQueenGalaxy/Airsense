@@ -256,7 +256,8 @@ html {
   text-align: center;
   /* Asegura que las secciones ancladas no queden tapadas por el header fijo */
   scroll-margin-top: 80px;
-  min-height: 1px;
+  min-height:  100vh; 
+  padding-top: 120px;
 }
 
 .section h2 {
@@ -271,6 +272,10 @@ html {
   margin: 0 auto;
   font-size: 1.1rem;
   color: #333;
+}
+
+[id] {
+  scroll-margin-top: 120px;  /* Para todos los anchors */
 }
 
 /* ==========================================================================
