@@ -132,4 +132,4 @@ This project is released under the **MIT License**. See the `LICENSE` file for d
 ---
 
 ## Contact
-For questions or collaboration, contact the project team at: **airsenseproyecto@gmail.com**
+For questions or collaboration, contact the project team at: **airsenseproyecto@gmail.com*
