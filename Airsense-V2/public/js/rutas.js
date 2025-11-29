@@ -113,7 +113,7 @@ const sections = Array.from(navLinks)
 const observerOptions = {
   root: null, // Observa en relación al viewport (la ventana del navegador)
   rootMargin: '-40% 0px -40% 0px',
-  threshold: 0
+  threshold: 0.5
 };
 
 // 4. Función que se ejecuta cuando una sección entra o sale de la vista
