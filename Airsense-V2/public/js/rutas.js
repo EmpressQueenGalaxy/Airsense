@@ -1,136 +1,129 @@
 /* ==========================================================================
-   AIRSENSE - LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
-   ==========================================================================
-   Gestiona:
-   1. El carrusel de imágenes y texto de la sección de inicio.
-   2. El resaltado de la navegación principal al hacer scroll (Intersection Observer).
+   AIRSENSE rutas.js - CORRECCIÓN DEFINITIVA DE MAPA/DATOS
    ========================================================================== */
 
-// ==========================================================================
-// MÓDULO: CARRUSEL DE INICIO
-// ==========================================================================
-const slides = document.querySelectorAll('.slide');
-const dots = document.querySelectorAll('.dot');
-const textElement = document.getElementById('slide-text');
+document.addEventListener('DOMContentLoaded', () => {
 
-const texts = [
-  "¿Sabías que en Colombia mueren más de 17.000 personas cada año por culpa del aire que respiran?",
-  "Monitorea la calidad del aire en el Valle del Cauca y aprende sobre los contaminantes.",
-  "Explora las estaciones y descubre cómo mejorar la calidad del aire que respiras."
-];
+  // ==========================================================================
+  // 1. CARRUSEL (Sin cambios, funciona bien)
+  // ==========================================================================
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  const textElement = document.getElementById('slide-text');
+  const nextBtn = document.getElementById('next');
+  const prevBtn = document.getElementById('prev');
 
-let current = 0;
+  const texts = [
+    "¿Sabías que en Colombia mueren más de 17.000 personas cada año por culpa del aire que respiran?",
+    "Monitorea la calidad del aire en el Valle del Cauca y aprende sobre los contaminantes.",
+    "Explora las estaciones y descubre cómo mejorar la calidad del aire que respiras."
+  ];
 
-/**
- * Muestra un slide específico basado en su índice.
- * @param {number} index - El índice (0, 1, 2) del slide a mostrar.
- */
-function showSlide(index) {
-  slides.forEach((slide, i) => {
-    slide.classList.toggle('active', i === index);
-    dots[i].classList.toggle('active', i === index);
-    dots[i].setAttribute('aria-selected', i === index);
-  });
-  textElement.textContent = texts[index];
+  let current = 0;
+
+  function showSlide(index) {
+    if (slides.length === 0) return;
+    slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+    dots.forEach((dot, i) => dot.classList.toggle("active", i === index));
+    if (textElement && texts[index]) textElement.textContent = texts[index];
+  }
+
+  function nextSlide() {
+    if (slides.length === 0) return;
+    current = (current + 1) % slides.length;
+    showSlide(current);
+  }
+
+  function prevSlide() {
+    if (slides.length === 0) return;
+    current = (current - 1 + slides.length) % slides.length;
+    showSlide(current);
+  }
+
+  if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+  if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+  dots.forEach((dot, i) => dot.addEventListener('click', () => { current = i; showSlide(i); }));
+
+  if (slides.length > 0) {
+    setInterval(nextSlide, 6000);
+    showSlide(current);
+  }
+
+  // ==========================================================================
+  // 2. NAVEGACIÓN "LÁSER" (SOLUCIÓN AL PROBLEMA DE MAPA)
+  // ==========================================================================
   
-}
+  const navLinks = document.querySelectorAll('.nav a, nav a');
+  let isUserClicking = false; 
+  let clickTimeout;
 
-// Avanza al siguiente slide, volviendo al primero si llega al final.
-function nextSlide() {
-  current = (current + 1) % slides.length;
-  showSlide(current);
-}
+  function activateLink(link) {
+    if (!link) return;
+    navLinks.forEach(l => {
+      l.classList.remove('nav-active');
+      l.removeAttribute('aria-current');
+    });
+    link.classList.add('nav-active');
+    link.setAttribute('aria-current', 'location');
+  }
 
-// Retrocede al slide anterior, yendo al último si estaba en el primero.
-function prevSlide() {
-  current = (current - 1 + slides.length) % slides.length;
-  showSlide(current);
-}
+  // --- LÓGICA DE CLIC (El "Candado") ---
+  navLinks.forEach(link => {
+    link.addEventListener('click', (event) => {
+      // 1. Activar candado: Prohibimos al detector cambiar nada
+      isUserClicking = true;
+      
+      // 2. Pintar inmediatamente lo que el usuario eligió
+      activateLink(event.currentTarget); 
 
-// --- Listeners del Carrusel ---
-document.getElementById('next').addEventListener('click', nextSlide);
-document.getElementById('prev').addEventListener('click', prevSlide);
-
-dots.forEach((dot, i) => {
-  dot.addEventListener('click', () => {
-    current = i;
-    showSlide(i);
+      // 3. Reiniciar temporizador
+      if (clickTimeout) clearTimeout(clickTimeout);
+      
+      // 4. Mantener el candado cerrado 1.5 SEGUNDOS
+      // Esto obliga al navegador a ignorar el paso por "Mapa"
+      clickTimeout = setTimeout(() => { 
+        isUserClicking = false; 
+      }, 1500);
+    });
   });
+
+  // --- LÓGICA DE SCROLL (El "Puntero Láser") ---
+  const sections = Array.from(navLinks)
+    .map(link => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) return document.getElementById(href.substring(1));
+      return null;
+    })
+    .filter(section => section !== null);
+
+  const observerOptions = {
+    root: null,
+    // LA SOLUCIÓN TÉCNICA:
+    // Antes mirábamos una zona grande (-10% a -60%).
+    // Ahora miramos una LÍNEA FINA (-20% a -75%).
+    // Esto hace casi imposible que toque dos secciones a la vez.
+    rootMargin: '-20% 0px -75% 0px',
+    threshold: 0
+  };
+
+  const observerCallback = (entries) => {
+    // Si el candado está activo (usuario hizo clic), NO HACEMOS NADA.
+    if (isUserClicking) return; 
+
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        const activeLink = document.querySelector(`.nav a[href="#${id}"], nav a[href="#${id}"]`);
+        
+        // Verificación extra: Si es "Mapa" pero estamos bajando mucho, ignorar (opcional)
+        if (activeLink) activateLink(activeLink);
+      }
+    });
+  };
+
+  if (sections.length > 0) {
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    sections.forEach(section => observer.observe(section));
+  }
+
 });
-
-setInterval(nextSlide, 6000); // cambia cada 6 segundos
-// Mostrar la primera diapositiva al cargar la página
-showSlide(current);
-
-/* =====================================================
-    MÓDULO: NAVEGACIÓN ACTIVA POR SCROLL
-====================================================== */
-
-// 1. Obtener todos los enlaces de la navegación principal
-const navLinks = document.querySelectorAll('.nav a');
-let userClicked = false; 
-
-function activateLink(link) {
-  navLinks.forEach(l => {
-    l.classList.remove('nav-active');
-    l.removeAttribute('aria-current');
-  });
-  link.classList.add('nav-active');
-  link.setAttribute('aria-current', 'page');
-}
-
-
-// -----------------------------------------------------
-// --- LÓGICA DE CLIC (Para respuesta inmediata) ---
-// -----------------------------------------------------
-
-function handleNavClick(event) {
-  userClicked = true; // ← CORRECCIÓN CLAVE
-
-  activateLink(event.currentTarget);
-
-  // desactivar protección tras un lapso
-  setTimeout(() => { 
-    userClicked = false;
-  }, 800); // ← tiempo ideal para evitar solapamiento
-}
-
-navLinks.forEach(link => {
-  link.addEventListener('click', handleNavClick);
-});
-
-
-// ---------------------------------------------------------
-// --- LÓGICA DE SCROLL (Para seguir al usuario) ---
-// ---------------------------------------------------------
-
-// 2. Obtener todas las secciones a las que los enlaces apuntan
-const sections = Array.from(navLinks)
-  .map(link => document.getElementById(link.getAttribute('href').substring(1)))
-  .filter(section => section !== null);
-
-// 3. Opciones para el observador
-const observerOptions = {
-  root: null, // Observa en relación al viewport (la ventana del navegador)
-  rootMargin: '-40% 0px -40% 0px',
-  threshold: 0.5
-};
-
-// 4. Función que se ejecuta cuando una sección entra o sale de la vista
-const observerCallback = (entries) => {
-  if (userClicked) return;
-
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      const activeLink = document.querySelector(`.nav a[href="#${id}"]`);
-      if (activeLink) activateLink(activeLink);
-    }
-  });
-};
-
-// 5. Crear y activar el observador
-const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-// 6. Decirle al observador qué secciones debe "vigilar"
-sections.forEach(section => {observer.observe(section);});

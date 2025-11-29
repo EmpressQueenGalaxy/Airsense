@@ -64,14 +64,25 @@
 
 /* --- Estilo para el enlace de la sección activa --- */
 .nav a.nav-active {
-  color: #ffeb3b; /* Mismo color amarillo del hover */
-  font-weight: 700; /* Letra más gruesa */
-  border-bottom: 2px solid #ffeb3b; /* Subrayado amarillo */
-  padding-bottom: 4px; /* Pequeño espacio para el subrayado */
+  color: #ffeb3b !important;      /* Amarillo brillante */
+  font-weight: 700 !important;    /* Negrita */
+  border-bottom: 2px solid #ffeb3b !important; /* Subrayado */
+  padding-bottom: 4px;
+  opacity: 1 !important;
 }
 
 .nav a.nav-active:hover {
   color: #ffeb3b; /* Mantener color al pasar el mouse */
+}
+
+section,
+#inicio, 
+#mapa, 
+#datos, 
+#contaminantes, 
+#nosotros, 
+#contacto {
+  scroll-margin-top: 110px !important; /* El tamaño de tu menú + un poco de aire */
 }
 
 /* ==========================================================================
@@ -246,8 +257,6 @@
 /* --- Configuración de Scroll Suave --- */
 html {
   scroll-behavior: smooth;
-  /* Dejar espacio para el header fijo al hacer scroll a anclas */
-  scroll-padding-top: 80px;
 }
 
 /* --- Estilo base para todas las secciones --- */
