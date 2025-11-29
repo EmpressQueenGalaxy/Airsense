@@ -112,7 +112,7 @@ const sections = Array.from(navLinks)
 // 3. Opciones para el observador
 const observerOptions = {
   root: null, // Observa en relación al viewport (la ventana del navegador)
-  rootMargin: '-20% 0px -55% 0px',
+  rootMargin: '-40% 0px -40% 0px',
   threshold: 0
 };
 
