@@ -66,71 +66,114 @@ showSlide(current);
     MÓDULO: NAVEGACIÓN ACTIVA POR SCROLL
 ====================================================== */
 
-// 1. Obtener todos los enlaces de la navegación principal
+// == Helpers ==
 const navLinks = document.querySelectorAll('.nav a');
-let userClicked = false; 
+let userClicked = false;
+let clickTimeout = null;
 
 function activateLink(link) {
   navLinks.forEach(l => {
     l.classList.remove('nav-active');
     l.removeAttribute('aria-current');
   });
+  if (!link) return;
   link.classList.add('nav-active');
   link.setAttribute('aria-current', 'page');
 }
 
-
-// -----------------------------------------------------
-// --- LÓGICA DE CLIC (Para respuesta inmediata) ---
-// -----------------------------------------------------
-
-function handleNavClick(event) {
-  userClicked = true; // ← CORRECCIÓN CLAVE
-
-  activateLink(event.currentTarget);
-
-  // desactivar protección tras un lapso
-  setTimeout(() => { 
-    userClicked = false;
-  }, 1500); // ← tiempo ideal para evitar solapamiento
-}
-
+// == CLICKS ==
 navLinks.forEach(link => {
-  link.addEventListener('click', handleNavClick);
+  link.addEventListener('click', (e) => {
+    userClicked = true;
+    clearTimeout(clickTimeout);
+
+    activateLink(e.currentTarget);
+
+    clickTimeout = setTimeout(() => {
+      userClicked = false;
+    }, 1500);
+  });
 });
 
-
-// ---------------------------------------------------------
-// --- LÓGICA DE SCROLL (Para seguir al usuario) ---
-// ---------------------------------------------------------
-
-// 2. Obtener todas las secciones a las que los enlaces apuntan
+// == IntersectionObserver robusto ==
 const sections = Array.from(navLinks)
   .map(link => document.getElementById(link.getAttribute('href').substring(1)))
-  .filter(section => section !== null);
+  .filter(Boolean);
 
-// 3. Opciones para el observador
+const ratios = new Map();
+
 const observerOptions = {
-  root: null, // Observa en relación al viewport (la ventana del navegador)
-  rootMargin: '-50% 0px -45% 0px',
-  threshold: 0
+  root: null,
+  rootMargin: '0px',
+  threshold: buildThresholdList()
 };
 
-// 4. Función que se ejecuta cuando una sección entra o sale de la vista
-const observerCallback = (entries) => {
+function buildThresholdList() {
+  let thresholds = [];
+  for (let i = 0; i <= 100; i++) thresholds.push(i/100);
+  return thresholds;
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    ratios.set(entry.target.id, entry.intersectionRatio);
+  });
+
   if (userClicked) return;
 
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      const activeLink = document.querySelector(`.nav a[href="#${id}"]`);
-      if (activeLink) activateLink(activeLink);
+  let best = null;
+  let bestRatio = 0;
+
+  for (let [id, ratio] of ratios.entries()) {
+    if (ratio > bestRatio) {
+      best = id;
+      bestRatio = ratio;
     }
-  });
-};
+  }
 
-// 5. Crear y activar el observador
-const observer = new IntersectionObserver(observerCallback, observerOptions);
+  if (best && bestRatio > 0.12) {
+    const chosenLink = document.querySelector(`.nav a[href="#${best}"]`);
+    activateLink(chosenLink);
+  }
 
-// 6. Decirle al observador qué secciones debe "vigilar"
-sections.forEach(section => {observer.observe(section);});
+}, observerOptions);
+
+sections.forEach(s => {
+  ratios.set(s.id, 0);
+  observer.observe(s);
+});
+
+// == Fallback por scroll ==
+let lastScrollTime = 0;
+window.addEventListener('scroll', () => {
+  lastScrollTime = Date.now();
+});
+
+setInterval(() => {
+  if (userClicked) return;
+
+  const now = Date.now();
+  if (now - lastScrollTime > 80) {
+    const viewportCenter = window.scrollY + (window.innerHeight / 2);
+
+    let nearest = null;
+    let minDist = Infinity;
+
+    sections.forEach(section => {
+      const top = section.offsetTop;
+      const height = section.offsetHeight;
+      const center = top + height/2;
+      const dist = Math.abs(center - viewportCenter);
+
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = section;
+      }
+    });
+
+    if (nearest) {
+      const link = document.querySelector(`.nav a[href="#${nearest.id}"]`);
+      activateLink(link);
+    }
+  }
+}, 200);
