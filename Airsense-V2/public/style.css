@@ -796,6 +796,19 @@ details[open] summary {
   }
 }
 
+/* ======================================================================
+   FIXES PARA MAPA – evita reflow y layout shifts
+   ====================================================================== */
+
+.vista-principal {
+    min-height: 1px; /* evita colapsos del contenedor */
+}
+
+.mapa {
+    min-height: 520px; /* evita saltos cuando el mapa carga */
+}
+
+
 /* ==========================================================================
    MODO OSCURO
    ==========================================================================

@@ -24,5 +24,4 @@ document.addEventListener("DOMContentLoaded", () => {
   inicializarVisor();
   const mapa = document.getElementById("map");
   mapa.setAttribute("tabindex", "0"); // ya en HTML
-  mapa.focus({ preventScroll: true });
 });

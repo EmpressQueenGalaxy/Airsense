@@ -5,6 +5,15 @@
 
 const map = L.map("map").setView([4, -76.55], 8.5);
 
+map.on("load", () => {
+  console.log("🌍 Mapa listo, aplicando focus accesible sin reflow...");
+  const mapa = document.getElementById("map");
+  if (mapa) {
+    mapa.setAttribute("tabindex", "0");
+    mapa.focus({ preventScroll: true });
+  }
+});
+
 /* -------------------- Capas base del mapa -------------------- */
 const urlMapaClaro = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const atribClaro = "© OpenStreetMap contributors";
