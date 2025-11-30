@@ -289,8 +289,6 @@ window.sincronizarEstacionConSelector = function (idEstacion) {
   resaltarEstacionEnMapa(idEstacion);
 };
 
-
-
 // --- Lógica de Inicialización del Modo Oscuro ---
 
 // ==========================================================================
@@ -347,3 +345,31 @@ const modoGuardado = localStorage.getItem('modoOscuro');
     // Cargar el mapa claro por defecto si no hay nada guardado
     setModoOscuro(false); 
   }
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const iframeMapa = document.getElementById("iframe-mapa");
+
+  if (!iframeMapa) {
+    console.error("❌ No se encontró el iframe del mapa");
+    return;
+  }
+
+  iframeMapa.addEventListener("load", () => {
+    console.log("✅ Iframe del mapa cargado");
+
+    const iframeDocument = iframeMapa.contentDocument;
+    const iframeBody = iframeDocument.body;
+
+    // Aquí va el observer SIN tocar mapa.html
+    const observerMapa = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          window.postMessage("mapa-visible", "*");
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    observerMapa.observe(iframeBody);
+  });
+});

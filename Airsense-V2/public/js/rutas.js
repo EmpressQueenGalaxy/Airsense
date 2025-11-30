@@ -71,7 +71,7 @@ const navLinks = document.querySelectorAll('.nav a');
 let userClicked = false;
 let clickTimeout = null;
 
-// 🔥 Detectar la sección visible y marcar activo el enlace del menú
+// Detectar la sección visible y marcar activo el enlace del menú
 function activarMenuSegunScroll() {
   let posicionActual = window.scrollY + 150; // margen para header
 
@@ -89,8 +89,6 @@ function activarMenuSegunScroll() {
     }
   });
 }
-
-//window.addEventListener("scroll", activarMenuSegunScroll);
 
 function activateLink(link) {
   navLinks.forEach(l => {
@@ -116,7 +114,7 @@ navLinks.forEach(link => {
   });
 });
 
-// == IntersectionObserver robusto ==
+// == IntersectionObserver  ==
 const sections = Array.from(navLinks)
   .map(link => document.getElementById(link.getAttribute('href').substring(1)))
   .filter(Boolean);
@@ -164,37 +162,13 @@ sections.forEach(s => {
   observer.observe(s);
 });
 
-// == Fallback por scroll ==
-//let lastScrollTime = 0;
-//window.addEventListener('scroll', () => {
-//  lastScrollTime = Date.now();});
-/*
-setInterval(() => {
-  if (userClicked) return;
+// =====================================================
+//    COMUNICACIÓN CON EL IFRAME DEL MAPA
+// =====================================================
 
-  const now = Date.now();
-  if (now - lastScrollTime > 80) {
-    const viewportCenter = window.scrollY + (window.innerHeight / 2);
-
-    let nearest = null;
-    let minDist = Infinity;
-
-    sections.forEach(section => {
-      const top = section.offsetTop;
-      const height = section.offsetHeight;
-      const center = top + height/2;
-      const dist = Math.abs(center - viewportCenter);
-
-      if (dist < minDist) {
-        minDist = dist;
-        nearest = section;
-      }
-    });
-
-    if (nearest) {
-      const link = document.querySelector(`.nav a[href="#${nearest.id}"]`);
-      activateLink(link);
-    }
+window.addEventListener("message", (event) => {
+  if (event.data === "mapa-visible") {
+    const linkMapa = document.querySelector('.nav a[href="#mapa"]');
+    activateLink(linkMapa);
   }
-}, 200);*/
-
+});
