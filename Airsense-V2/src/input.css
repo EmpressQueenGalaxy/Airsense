@@ -116,6 +116,13 @@
   display: block; /* Visible cuando está activo */
 }
 
+/* Evitar layout shift en el texto del carrusel */
+#slide-text {
+  display: block;
+  min-height: 6rem;      /* ← Altura fija para que no se mueva */
+  transition: opacity .3s ease;
+}
+
 /* --- Capa oscura para legibilidad del texto --- */
 .overlay {
   position: absolute;
@@ -256,7 +263,6 @@ html {
   /* Asegura que las secciones ancladas no queden tapadas por el header fijo */
   scroll-margin-top: 80px;
   min-height:  100vh; 
-  outline: 1px dashed rgba(255,0,0,0.08);
 }
 
 .section h2 {
