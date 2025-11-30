@@ -71,6 +71,28 @@ const navLinks = document.querySelectorAll('.nav a');
 let userClicked = false;
 let clickTimeout = null;
 
+// 🔥 Detectar la sección visible y marcar activo el enlace del menú
+function activarMenuSegunScroll() {
+  let posicionActual = window.scrollY + 150; // margen para header
+
+  sections.forEach(section => {
+    let top = section.offsetTop;
+    let height = section.offsetHeight;
+    let id = section.getAttribute("id");
+
+    if (posicionActual >= top && posicionActual < top + height) {
+      navLinks.forEach(link => link.classList.remove("nav-active"));
+
+      // Buscar el enlace cuyo href coincide con la sección visible
+      let activo = document.querySelector(`.nav a[href="#${id}"]`);
+      if (activo) activo.classList.add("nav-active");
+    }
+  });
+}
+
+window.addEventListener("scroll", activarMenuSegunScroll);
+
+
 function activateLink(link) {
   navLinks.forEach(l => {
     l.classList.remove('nav-active');
