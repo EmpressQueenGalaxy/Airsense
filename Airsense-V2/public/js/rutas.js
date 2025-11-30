@@ -90,8 +90,7 @@ function activarMenuSegunScroll() {
   });
 }
 
-window.addEventListener("scroll", activarMenuSegunScroll);
-
+//window.addEventListener("scroll", activarMenuSegunScroll);
 
 function activateLink(link) {
   navLinks.forEach(l => {
@@ -166,11 +165,10 @@ sections.forEach(s => {
 });
 
 // == Fallback por scroll ==
-let lastScrollTime = 0;
-window.addEventListener('scroll', () => {
-  lastScrollTime = Date.now();
-});
-
+//let lastScrollTime = 0;
+//window.addEventListener('scroll', () => {
+//  lastScrollTime = Date.now();});
+/*
 setInterval(() => {
   if (userClicked) return;
 
@@ -198,4 +196,5 @@ setInterval(() => {
       activateLink(link);
     }
   }
-}, 200);
+}, 200);*/
+
