@@ -75,16 +75,6 @@
   color: #ffeb3b; /* Mantener color al pasar el mouse */
 }
 
-section,
-#inicio, 
-#mapa, 
-#datos, 
-#contaminantes, 
-#nosotros, 
-#contacto {
-  scroll-margin-top: 110px !important; /* El tamaño de tu menú + un poco de aire */
-}
-
 /* ==========================================================================
    2. SECCIÓN: CARRUSEL DE INICIO (#inicio)
    ========================================================================== */
@@ -257,6 +247,7 @@ section,
 /* --- Configuración de Scroll Suave --- */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 90px;
 }
 
 /* --- Estilo base para todas las secciones --- */
