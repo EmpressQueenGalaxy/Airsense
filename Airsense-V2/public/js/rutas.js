@@ -56,7 +56,6 @@ showSlide(current);
 /* ========================================================================== 
    2. NAVEGACIÓN ACTIVA UNIFICADA Y SINCRONIZADA
 ========================================================================== */
-
 const navLinks = document.querySelectorAll('.nav a');
 const sections = Array.from(navLinks)
   .map(link => document.querySelector(link.getAttribute("href")))
@@ -71,9 +70,6 @@ function setActiveLink(id) {
   });
 }
 
-// Control para scroll programático
-let isScrollingProgrammatically = false;
-
 // Scroll suave al hacer click
 navLinks.forEach(link => {
   link.addEventListener('click', e => {
@@ -81,65 +77,35 @@ navLinks.forEach(link => {
     const target = document.querySelector(link.getAttribute("href"));
     if (!target) return;
 
-    isScrollingProgrammatically = true; // bloquear scroll automático
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    // Desbloquear después del scroll
-    setTimeout(() => {
-      isScrollingProgrammatically = false;
-      updateActiveOnScroll(); // actualizar link final
-    }, 600);
   });
 });
 
-// Actualizar link activo basado en scroll
-function updateActiveOnScroll() {
-  if (isScrollingProgrammatically) return; // evitar sobrescribir durante scroll suave
+// IntersectionObserver para secciones
+const observer = new IntersectionObserver(entries => {
+  // Ordenar por porcentaje visible
+  const visibleEntries = entries.filter(e => e.isIntersecting);
+  if (visibleEntries.length === 0) return;
 
-  const triggerPos = window.innerHeight * 0.25;
-  let current = null;
-  let minDistance = Infinity;
+  visibleEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+  const topSection = visibleEntries[0].target;
+  setActiveLink(topSection.id);
+}, {
+  threshold: Array.from({length: 101}, (_, i) => i/100) // múltiple threshold para precisión
+});
 
-  // Detecta sección más cercana al trigger
-  sections.forEach(sec => {
-    const rect = sec.getBoundingClientRect();
-    const distance = Math.abs(rect.top - triggerPos);
-    if (distance < minDistance) {
-      minDistance = distance;
-      current = sec.getAttribute("id");
-    }
-  });
+// Observar todas las secciones
+sections.forEach(sec => observer.observe(sec));
 
-  // Prioridad absoluta al mapa
-  const mapaSection = document.querySelector("#mapa");
-  if (mapaSection) {
-    const rectMapa = mapaSection.getBoundingClientRect();
-    if (rectMapa.top <= triggerPos && rectMapa.bottom >= triggerPos) {
-      current = "mapa";
-    }
-  }
-
-  if (current) setActiveLink(current);
-}
-
-// Eventos de scroll, resize y carga
-window.addEventListener("scroll", updateActiveOnScroll);
-window.addEventListener("resize", updateActiveOnScroll);
-document.addEventListener("DOMContentLoaded", updateActiveOnScroll);
-
-// Observador para iframe del mapa
+// Prioridad absoluta al iframe del mapa
 const iframeMapa = document.getElementById("iframe-mapa");
 if (iframeMapa) {
   iframeMapa.addEventListener("load", () => {
-    const iframeDocument = iframeMapa.contentDocument;
-    const iframeBody = iframeDocument.body;
-
+    const iframeBody = iframeMapa.contentDocument.body;
     const observerMapa = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        setActiveLink("mapa");
-      }
+      if (entries[0].isIntersecting) setActiveLink("mapa");
     }, { threshold: 0.25 });
-
     observerMapa.observe(iframeBody);
   });
 }
+
