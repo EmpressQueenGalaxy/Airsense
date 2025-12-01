@@ -698,6 +698,7 @@ html {
 }
 
 .footer__institucion-link:hover {
+  color: #5bc0be;
   transform: translateX(5px); 
   text-decoration: none; 
 }
