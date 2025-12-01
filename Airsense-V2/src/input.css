@@ -697,13 +697,15 @@ html {
   color: #b8d4d4;
   text-decoration: none;
   font-size: inherit;
-  line-height: inherit;                    
-  transition: all 0.3s ease;  
+  line-height: inherit;
+  display: inline-block; 
+  transition: transform 0.3s ease, color 0.3s ease;  
 }
 
 .footer__institucion-link:hover {
   color: #ffffff;
-  text-decoration: underline;
+  transform: translateX(5px); 
+  text-decoration: none; 
 }
 
 .footer__equipo {
