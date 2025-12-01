@@ -89,7 +89,7 @@ navLinks.forEach(link => {
 // ========== SCROLL DETECTA SECCIÓN ACTUAL ==========
 window.addEventListener("scroll", () => {
   let current = null;
-  const scrollPos = window.scrollY + window.innerHeight / 3; // detección REAL
+  const scrollPos = window.scrollY + window.innerHeight * 0.15; // detección REAL
 
   sections.forEach(sec => {
     if (!sec) return;
