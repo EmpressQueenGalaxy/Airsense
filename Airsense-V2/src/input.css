@@ -31,7 +31,6 @@
   align-items: center;
 }
 
-/* --- Ajuste para que el menú no choque con el logo en pantallas medianas --- */
 /* =======================================================
    MEDIA QUERY PARA TABLETS Y MÓVILES (Menos de 768px)
    ======================================================= */
@@ -39,7 +38,6 @@
 
   /* 1. El contenedor principal se vuelve una columna vertical */
   .header .container {
-    flex-direction: column; /* Apila los elementos uno encima del otro */
     gap: 1rem;              /* Espacio entre el logo y el menú */
     padding-bottom: 1rem;   /* Un poco de espacio extra abajo */
   }
@@ -205,7 +203,7 @@
 /* --- Contenido de texto superpuesto --- */
 .content {
   position: absolute;
-  top: 50%;
+  top: 65%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
