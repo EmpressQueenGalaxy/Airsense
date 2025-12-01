@@ -51,13 +51,21 @@
 }
 
 /* --- Navegación del Header --- */
+.nav {
+  display: flex;
+  flex-wrap: wrap; /* permite que los enlaces bajen de línea en pantallas pequeñas */
+  align-items: center;
+}
+
 .nav a {
   display: inline-block; 
   padding: 0.25rem 0; 
   color: white;
   margin-left: 1rem;
   font-weight: 500;
-  transition: color 0.3s;
+  transition: color 0.3s, font-size 0.3s;
+  white-space: nowrap; /* evita que el texto se divida en dos líneas */
+  font-size: clamp(0.9rem, 2vw, 1.1rem); /* ajusta tamaño según pantalla */
 }
 
 .nav a:hover {
@@ -75,6 +83,15 @@
 
 .nav a.nav-active:hover {
   color: #ffeb3b; /* Mantener color al pasar el mouse */
+}
+
+/* --- Ajustes para pantallas pequeñas --- */
+@media (max-width: 768px) {
+  .nav a {
+    margin-left: 0.5rem; /* menos espacio entre enlaces */
+    font-size: clamp(0.8rem, 3vw, 1rem); /* más pequeño en móviles */
+    padding: 0.2rem 0;
+  }
 }
 
 /* ==========================================================================
