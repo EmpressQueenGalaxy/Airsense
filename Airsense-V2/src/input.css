@@ -8,7 +8,6 @@
   estilo.css es el archivo generado automáticamente que contiene todos los estilos finales que usa la página.
    ========================================================================== */
 
-
 /* ==========================================================================
    1. ESTILOS GLOBALES Y DEL HEADER
    ========================================================================== */
@@ -30,6 +29,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+/* --- Ajuste para que el menú no choque con el logo en pantallas medianas --- */
+@media (max-width: 1024px) {
+  .header .container {
+    flex-direction: column; /* Pone el logo arriba y el menú abajo */
+    gap: 10px; /* Espacio entre logo y menú */
+  }
+
+  .nav {
+    justify-content: center; /* Centra los enlaces */
+    width: 100%;
+  }
+
+  .nav a {
+    margin: 0 0.5rem; /* Ajusta el margen lateral */
+    font-size: 0.9rem; /* Un poco más pequeño para que quepan bien */
+  }
 }
 
 /* --- Logo del Header --- */
@@ -139,7 +157,7 @@
   width: 100%;
   height: 100%;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   opacity: 0;
   transition: opacity 1.2s ease-in-out;
