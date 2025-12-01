@@ -54,18 +54,15 @@ setInterval(nextSlide, 6000);
 showSlide(current);
 
 /* ========================================================================== 
-   2. NAVEGACIÓN ACTIVA UNIFICADA Y ESTABLE
+   2. NAVEGACIÓN ACTIVA UNIFICADA Y SINCRONIZADA
 ========================================================================== */
 
-// Enlaces del menú
 const navLinks = document.querySelectorAll('.nav a');
-
-// Secciones correspondientes a cada link
 const sections = Array.from(navLinks)
   .map(link => document.querySelector(link.getAttribute("href")))
   .filter(Boolean);
 
-// Función para marcar un link como activo
+// Función para marcar un link activo
 function setActiveLink(id) {
   navLinks.forEach(link => {
     const isActive = link.getAttribute("href") === "#" + id;
@@ -74,24 +71,36 @@ function setActiveLink(id) {
   });
 }
 
+// Control para scroll programático
+let isScrollingProgrammatically = false;
+
 // Scroll suave al hacer click
 navLinks.forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
     const target = document.querySelector(link.getAttribute("href"));
     if (!target) return;
+
+    isScrollingProgrammatically = true; // bloquear scroll automático
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Desbloquear después del scroll
+    setTimeout(() => {
+      isScrollingProgrammatically = false;
+      updateActiveOnScroll(); // actualizar link final
+    }, 600);
   });
 });
 
-// Función para actualizar el link activo basado en scroll
+// Actualizar link activo basado en scroll
 function updateActiveOnScroll() {
-  const triggerPos = window.innerHeight * 0.25; // punto de referencia
+  if (isScrollingProgrammatically) return; // evitar sobrescribir durante scroll suave
 
+  const triggerPos = window.innerHeight * 0.25;
   let current = null;
   let minDistance = Infinity;
 
-  // Detecta la sección más cercana al trigger
+  // Detecta sección más cercana al trigger
   sections.forEach(sec => {
     const rect = sec.getBoundingClientRect();
     const distance = Math.abs(rect.top - triggerPos);
@@ -101,7 +110,7 @@ function updateActiveOnScroll() {
     }
   });
 
-  // Prioridad absoluta al mapa si está visible
+  // Prioridad absoluta al mapa
   const mapaSection = document.querySelector("#mapa");
   if (mapaSection) {
     const rectMapa = mapaSection.getBoundingClientRect();
@@ -134,47 +143,3 @@ if (iframeMapa) {
     observerMapa.observe(iframeBody);
   });
 }
-
-/* ========================================================================== 
-   TRUCO VISUAL DE DEPURACIÓN - SECCIONES ACTIVAS
-========================================================================== */
-
-// Crear una línea horizontal que indique el triggerPos
-const debugLine = document.createElement('div');
-debugLine.style.position = 'fixed';
-debugLine.style.left = '0';
-debugLine.style.width = '100%';
-debugLine.style.height = '2px';
-debugLine.style.background = 'red';
-debugLine.style.zIndex = '9999';
-debugLine.style.top = (window.innerHeight * 0.25) + 'px';
-document.body.appendChild(debugLine);
-
-// Resaltar sección activa visualmente
-function highlightSection() {
-  const triggerPos = window.innerHeight * 0.25;
-  let closestSection = null;
-  let minDistance = Infinity;
-
-  sections.forEach(sec => {
-    sec.style.outline = ''; // limpiar borde previo
-    const rect = sec.getBoundingClientRect();
-    const distance = Math.abs(rect.top - triggerPos);
-    if (distance < minDistance) {
-      minDistance = distance;
-      closestSection = sec;
-    }
-  });
-
-  if (closestSection) {
-    closestSection.style.outline = '3px dashed orange'; // resalta la sección activa
-  }
-}
-
-// Actualizar resalte al hacer scroll o resize
-window.addEventListener('scroll', highlightSection);
-window.addEventListener('resize', () => {
-  debugLine.style.top = (window.innerHeight * 0.25) + 'px';
-  highlightSection();
-});
-document.addEventListener('DOMContentLoaded', highlightSection);
