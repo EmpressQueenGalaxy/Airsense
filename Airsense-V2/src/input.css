@@ -40,14 +40,31 @@
 }
 
 .logo img {
-  width: 40px;
-  height: 40px;
+  width: clamp(30px, 5vw, 40px); /* ajusta tamaño según pantalla */
+  height: auto; /* mantiene proporción */
 }
 
 .logo h1 {
   color: white;
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 4vw, 1.3rem); /* escalable según pantalla */
   font-weight: 600;
+  margin: 0;
+  white-space: nowrap; /* evita que se divida en varias líneas */
+}
+
+/* --- Ajustes adicionales para pantallas pequeñas --- */
+@media (max-width: 480px) {
+  .logo {
+    gap: 0.3rem;
+  }
+
+  .logo img {
+    width: clamp(25px, 8vw, 35px);
+  }
+
+  .logo h1 {
+    font-size: clamp(0.9rem, 5vw, 1.1rem);
+  }
 }
 
 /* --- Navegación del Header --- */
