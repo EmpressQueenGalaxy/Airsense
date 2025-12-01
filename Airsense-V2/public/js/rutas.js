@@ -57,10 +57,6 @@ showSlide(current);
    AIRSENSE - NAVEGACIÓN ACTIVA 
 ========================================================================== */
 
-/* =========================
-   NAVEGACIÓN ACTIVA ROBUSTA
-   ========================= */
-
 const navLinks = document.querySelectorAll('.nav a');
 const sections = Array.from(navLinks)
   .map(link => document.querySelector(link.getAttribute("href")))
@@ -189,12 +185,13 @@ function getTopSection(triggerPercent = 0.1) {
 }
 
 function updateActiveFromObserverOrTop() {
-  // prioridad absoluta al mapa si es visible (>0px visible)
+  // prioridad absoluta al mapa solo si al menos 25% visible
   const mapa = document.querySelector('#mapa');
   if (mapa) {
     const r = mapa.getBoundingClientRect();
     const visibleMapa = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
-    if (visibleMapa > 0) {
+    const visibleRatio = visibleMapa / r.height;
+    if (visibleRatio >= 0.25) {
       setActiveLink('mapa');
       return;
     }
@@ -207,7 +204,7 @@ function updateActiveFromObserverOrTop() {
     return;
   }
 
-  // 2) fallback top-based (útil si las secciones son pequeñas)
+  // 2) fallback top-based
   const topSec = getTopSection(0.1);
   if (topSec) setActiveLink(topSec.id);
 }
