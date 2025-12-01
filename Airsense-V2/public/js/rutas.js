@@ -89,38 +89,38 @@ navLinks.forEach(link => {
 // ========== SCROLL DETECTA SECCIÓN ACTUAL ==========
 window.addEventListener("scroll", () => {
   let current = null;
-  const scrollPos = window.scrollY + window.innerHeight * 0.15; // detección REAL
 
   sections.forEach(sec => {
-    if (!sec) return;
-
-    const top = sec.offsetTop;
-    const bottom = top + sec.offsetHeight;
-
-    if (scrollPos >= top && scrollPos < bottom) {
+    const rect = sec.getBoundingClientRect();
+    if (rect.top <= window.innerHeight * 0.25 && rect.bottom >= window.innerHeight * 0.25) {
       current = sec.getAttribute("id");
     }
   });
 
-  // Si el mapa está visible → PRIORIDAD TOTAL
+  // Prioridad al mapa
   const mapaSection = document.querySelector("#mapa");
   if (mapaSection) {
-    const mapaTop = mapaSection.offsetTop;
-    const mapaBottom = mapaTop + mapaSection.offsetHeight;
-
-    if (scrollPos >= mapaTop && scrollPos < mapaBottom) {
-      current = "mapa"; // prioridad absoluta
+    const rectMapa = mapaSection.getBoundingClientRect();
+    if (rectMapa.top <= window.innerHeight * 0.25 && rectMapa.bottom >= window.innerHeight * 0.25) {
+      current = "mapa";
     }
   }
 
-  // Aplicar en el menú
   navLinks.forEach(a => {
-    a.classList.remove("nav-active");
-    if (a.getAttribute("href") === "#" + current) {
-      a.classList.add("nav-active");
-    }
+    a.classList.toggle("nav-active", a.getAttribute("href") === "#" + current);
   });
 });
+
+  // Aplicar en el menú
+navLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute("href"));
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
 
 /* ==========================================================================
    3. COMUNICACIÓN CON EL IFRAME DEL MAPA
