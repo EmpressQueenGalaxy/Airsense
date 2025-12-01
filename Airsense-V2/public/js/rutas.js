@@ -134,3 +134,47 @@ if (iframeMapa) {
     observerMapa.observe(iframeBody);
   });
 }
+
+/* ========================================================================== 
+   TRUCO VISUAL DE DEPURACIÓN - SECCIONES ACTIVAS
+========================================================================== */
+
+// Crear una línea horizontal que indique el triggerPos
+const debugLine = document.createElement('div');
+debugLine.style.position = 'fixed';
+debugLine.style.left = '0';
+debugLine.style.width = '100%';
+debugLine.style.height = '2px';
+debugLine.style.background = 'red';
+debugLine.style.zIndex = '9999';
+debugLine.style.top = (window.innerHeight * 0.25) + 'px';
+document.body.appendChild(debugLine);
+
+// Resaltar sección activa visualmente
+function highlightSection() {
+  const triggerPos = window.innerHeight * 0.25;
+  let closestSection = null;
+  let minDistance = Infinity;
+
+  sections.forEach(sec => {
+    sec.style.outline = ''; // limpiar borde previo
+    const rect = sec.getBoundingClientRect();
+    const distance = Math.abs(rect.top - triggerPos);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestSection = sec;
+    }
+  });
+
+  if (closestSection) {
+    closestSection.style.outline = '3px dashed orange'; // resalta la sección activa
+  }
+}
+
+// Actualizar resalte al hacer scroll o resize
+window.addEventListener('scroll', highlightSection);
+window.addEventListener('resize', () => {
+  debugLine.style.top = (window.innerHeight * 0.25) + 'px';
+  highlightSection();
+});
+document.addEventListener('DOMContentLoaded', highlightSection);
