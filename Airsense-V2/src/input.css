@@ -29,24 +29,48 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 /* --- Ajuste para que el menú no choque con el logo en pantallas medianas --- */
-@media (max-width: 1024px) {
+/* =======================================================
+   MEDIA QUERY PARA TABLETS Y MÓVILES (Menos de 768px)
+   ======================================================= */
+@media (max-width: 768px) {
+
+  /* 1. El contenedor principal se vuelve una columna vertical */
   .header .container {
-    flex-direction: column; /* Pone el logo arriba y el menú abajo */
-    gap: 10px; /* Espacio entre logo y menú */
+    flex-direction: column; /* Apila los elementos uno encima del otro */
+    gap: 1rem;              /* Espacio entre el logo y el menú */
+    padding-bottom: 1rem;   /* Un poco de espacio extra abajo */
   }
 
+  /* 2. El Logo también se vuelve columna (Imagen arriba, Texto AirSense abajo) */
+  .logo {
+    flex-direction: column; /* Esto pone la imagen arriba y el texto abajo */
+    gap: 5px;               /* Espacio pequeñito entre icono y texto */
+  }
+
+  /* 3. Ajustes opcionales para que se vea centrado y bonito */
+  .logo img {
+    width: 50px; /* Un poquito más grande en móvil si quieres que destaque */
+  }
+
+  .logo h1 {
+    font-size: 1.5rem; /* Ajusta el tamaño del texto AirSense */
+    text-align: center;
+  }
+
+  /* 4. El menú de navegación se centra y ocupa el ancho disponible */
   .nav {
-    justify-content: center; /* Centra los enlaces */
     width: 100%;
+    justify-content: center; /* Centra los enlaces horizontalmente */
+    margin-left: 0;          /* Quita el margen izquierdo por defecto */
+    flex-wrap: wrap;         /* Asegura que si son muchos links, bajen de línea */
   }
-
+  
   .nav a {
-    margin: 0 0.5rem; /* Ajusta el margen lateral */
-    font-size: 0.9rem; /* Un poco más pequeño para que quepan bien */
+    margin: 0 0.5rem 0.5rem; /* Margen alrededor de cada enlace */
+    font-size: 1rem;
   }
 }
 
