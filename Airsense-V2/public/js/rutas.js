@@ -54,8 +54,9 @@ setInterval(nextSlide, 6000);
 showSlide(current);
 
 /* ==========================================================================
-   2. NAVEGACIÓN ACTIVA CON INTERSECTION OBSERVER
+   AIRSENSE - NAVEGACIÓN ACTIVA 
 ========================================================================== */
+
 const navLinks = document.querySelectorAll('.nav a');
 const sections = Array.from(navLinks)
   .map(link => document.querySelector(link.getAttribute("href")))
@@ -80,24 +81,29 @@ navLinks.forEach(link => {
   });
 });
 
-// IntersectionObserver confiable para todas las secciones
+// IntersectionObserver para todas las secciones
 const observer = new IntersectionObserver(entries => {
-  // Filtrar las secciones que estén al menos 50% visibles
-  const visibleSections = entries
-    .filter(e => e.intersectionRatio >= 0.5)
-    .sort((a, b) => a.target.offsetTop - b.target.offsetTop);
+  let visibleSection = null;
+  let maxRatio = 0;
 
-  if (visibleSections.length === 0) return;
+  entries.forEach(entry => {
+    if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+      maxRatio = entry.intersectionRatio;
+      visibleSection = entry.target;
+    }
+  });
 
-  // Tomar la primera visible en el orden del documento
-  const topSection = visibleSections[0].target;
-  setActiveLink(topSection.id);
-}, { threshold: 0.5 });
+  if (visibleSection) {
+    setActiveLink(visibleSection.id);
+  }
+}, {
+  threshold: Array.from({ length: 101 }, (_, i) => i / 100) // múltiple threshold para máxima precisión
+});
 
 // Observar todas las secciones
 sections.forEach(sec => observer.observe(sec));
 
-// Prioridad absoluta al iframe del mapa (si existe)
+// Prioridad absoluta al iframe del mapa
 const iframeMapa = document.getElementById("iframe-mapa");
 if (iframeMapa) {
   iframeMapa.addEventListener("load", () => {
@@ -105,7 +111,7 @@ if (iframeMapa) {
 
     const observerMapa = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) {
-        setActiveLink("mapa"); // Prioridad absoluta
+        setActiveLink("mapa");
       }
     }, { threshold: 0.25 });
 
