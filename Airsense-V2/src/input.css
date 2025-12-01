@@ -697,9 +697,7 @@ html {
   color: #b8d4d4;
   text-decoration: none;
   font-size: inherit;
-  line-height: inherit;  
-  display: inline-flex;     
-  gap: 6px;                 
+  line-height: inherit;                    
   transition: all 0.3s ease;  
 }
 
