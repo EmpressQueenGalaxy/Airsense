@@ -52,6 +52,8 @@
 
 /* --- Navegación del Header --- */
 .nav a {
+  display: inline-block; 
+  padding: 0.25rem 0; 
   color: white;
   margin-left: 1rem;
   font-weight: 500;

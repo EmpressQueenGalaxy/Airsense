@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AIRSENSE - LÓGICA DE LA PÁGINA DE INICIO (VISOR.HTML)
+   AIRSENSE - LÓGICA DE LA PÁGINA DE INICIO (visor.html)
    ==========================================================================
    Gestiona:
    1. El carrusel de imágenes y texto de la sección de inicio.
@@ -133,34 +133,29 @@ function buildThresholdList() {
   return thresholds;
 }
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    ratios.set(entry.target.id, entry.intersectionRatio);
-  });
+// Observador para detectar qué sección está visible
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      const id = entry.target.id;
+      const link = document.querySelector(`nav a[href="#${id}"]`);
 
-  if (userClicked) return;
+      if (entry.intersectionRatio > 0.55) {
+        // 🔥 EXCLUSIVO: quitamos todas las clases antes de activar una sola
+        enlaces.forEach((a) => a.classList.remove("active"));
 
-  let best = null;
-  let bestRatio = 0;
-
-  for (let [id, ratio] of ratios.entries()) {
-    if (ratio > bestRatio) {
-      best = id;
-      bestRatio = ratio;
-    }
+        // Activamos solo el enlace de esa sección
+        if (link) link.classList.add("active");
+      }
+    });
+  },
+  {
+    threshold: [0.55], // Marca activa solo si MÁS DEL 55% es visible
   }
+);
 
-  if (best && bestRatio > 0.12) {
-    const chosenLink = document.querySelector(`.nav a[href="#${best}"]`);
-    activateLink(chosenLink);
-  }
-
-}, observerOptions);
-
-sections.forEach(s => {
-  ratios.set(s.id, 0);
-  observer.observe(s);
-});
+// Observamos todas las secciones
+secciones.forEach((sec) => observer.observe(sec));
 
 // =====================================================
 //    COMUNICACIÓN CON EL IFRAME DEL MAPA
@@ -198,5 +193,23 @@ window.addEventListener("message", (event) => {
     );
 
     observerMapa.observe(iframeBody);
+  });
+});
+
+window.addEventListener("scroll", () => {
+  let current = "";
+
+  sections.forEach(sec => {
+    const top = window.scrollY;
+    if (top >= sec.offsetTop - 150) {
+      current = sec.getAttribute("id");
+    }
+  });
+
+  navLinks.forEach(a => {
+    a.classList.remove("nav-active");
+    if (a.getAttribute("href") === "#" + current) {
+      a.classList.add("nav-active");
+    }
   });
 });
