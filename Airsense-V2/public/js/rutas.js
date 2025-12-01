@@ -61,7 +61,6 @@ const sections = Array.from(navLinks)
   .map(link => document.querySelector(link.getAttribute("href")))
   .filter(Boolean);
 
-// Función para marcar un link activo
 function setActiveLink(id) {
   navLinks.forEach(link => {
     const isActive = link.getAttribute("href") === "#" + id;
@@ -70,42 +69,31 @@ function setActiveLink(id) {
   });
 }
 
-// Scroll suave al hacer click
-navLinks.forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const target = document.querySelector(link.getAttribute("href"));
-    if (!target) return;
+function updateActiveOnScroll() {
+  const triggerPos = window.innerHeight * 0.25; // punto de referencia
+  let current = sections[0].id; // default a primera sección
 
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
+  for (const sec of sections) {
+    const rect = sec.getBoundingClientRect();
+    if (rect.top <= triggerPos) {
+      current = sec.id;
+    } else {
+      break; // todas las siguientes están abajo del trigger
+    }
+  }
 
-// IntersectionObserver para secciones
-const observer = new IntersectionObserver(entries => {
-  // Ordenar por porcentaje visible
-  const visibleEntries = entries.filter(e => e.isIntersecting);
-  if (visibleEntries.length === 0) return;
+  // Prioridad absoluta al mapa
+  const mapaSection = document.querySelector("#mapa");
+  if (mapaSection) {
+    const rectMapa = mapaSection.getBoundingClientRect();
+    if (rectMapa.top <= triggerPos && rectMapa.bottom >= triggerPos) {
+      current = "mapa";
+    }
+  }
 
-  visibleEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-  const topSection = visibleEntries[0].target;
-  setActiveLink(topSection.id);
-}, {
-  threshold: Array.from({length: 101}, (_, i) => i/100) // múltiple threshold para precisión
-});
-
-// Observar todas las secciones
-sections.forEach(sec => observer.observe(sec));
-
-// Prioridad absoluta al iframe del mapa
-const iframeMapa = document.getElementById("iframe-mapa");
-if (iframeMapa) {
-  iframeMapa.addEventListener("load", () => {
-    const iframeBody = iframeMapa.contentDocument.body;
-    const observerMapa = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) setActiveLink("mapa");
-    }, { threshold: 0.25 });
-    observerMapa.observe(iframeBody);
-  });
+  setActiveLink(current);
 }
 
+window.addEventListener("scroll", updateActiveOnScroll);
+window.addEventListener("resize", updateActiveOnScroll);
+document.addEventListener("DOMContentLoaded", updateActiveOnScroll);
