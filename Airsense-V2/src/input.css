@@ -145,7 +145,6 @@
   transition: opacity 1.2s ease-in-out;
   z-index: 0;
   display: none; /* Oculto por defecto */
-  min-height: 400px;
 }
 
 .slide.active {
