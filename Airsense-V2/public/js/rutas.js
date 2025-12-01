@@ -53,9 +53,8 @@ dots.forEach((dot, i) => {
 setInterval(nextSlide, 6000);
 showSlide(current);
 
-
-/* ==========================================================================
-   2. NAVEGACIÓN ACTIVA POR SCROLL (VERSIÓN ESTABLE)
+/* ========================================================================== 
+   NAVEGACIÓN ACTIVA UNIFICADA
 ========================================================================== */
 
 // Enlaces del menú
@@ -66,90 +65,65 @@ const sections = Array.from(navLinks)
   .map(link => document.querySelector(link.getAttribute("href")))
   .filter(Boolean);
 
-// Marca el enlace activo
-function activateLink(link) {
-  navLinks.forEach(l => {
-    l.classList.remove('nav-active');
-    l.removeAttribute('aria-current');
+// Función que marca el link activo
+function setActiveLink(id) {
+  navLinks.forEach(link => {
+    link.classList.toggle('nav-active', link.getAttribute("href") === "#" + id);
+    link.setAttribute('aria-current', link.getAttribute("href") === "#" + id ? "page" : "");
   });
-
-  if (!link) return;
-
-  link.classList.add('nav-active');
-  link.setAttribute('aria-current', 'page');
 }
 
-// Evento click → marca manualmente
+// Scroll suave al hacer click
 navLinks.forEach(link => {
-  link.addEventListener('click', (e) => {
-    activateLink(e.currentTarget);
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute("href"));
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
 
-// ========== SCROLL DETECTA SECCIÓN ACTUAL ==========
-window.addEventListener("scroll", () => {
+// Detectar sección visible en scroll
+function updateActiveOnScroll() {
   let current = null;
+  const triggerPos = window.innerHeight * 0.25; // punto de referencia en la pantalla
 
   sections.forEach(sec => {
     const rect = sec.getBoundingClientRect();
-    if (rect.top <= window.innerHeight * 0.25 && rect.bottom >= window.innerHeight * 0.25) {
+    if (rect.top <= triggerPos && rect.bottom >= triggerPos) {
       current = sec.getAttribute("id");
     }
   });
 
-  // Prioridad al mapa
+  // Prioridad al mapa si está visible
   const mapaSection = document.querySelector("#mapa");
   if (mapaSection) {
     const rectMapa = mapaSection.getBoundingClientRect();
-    if (rectMapa.top <= window.innerHeight * 0.25 && rectMapa.bottom >= window.innerHeight * 0.25) {
+    if (rectMapa.top <= triggerPos && rectMapa.bottom >= triggerPos) {
       current = "mapa";
     }
   }
 
-  navLinks.forEach(a => {
-    a.classList.toggle("nav-active", a.getAttribute("href") === "#" + current);
-  });
-});
+  if (current) setActiveLink(current);
+}
 
-  // Aplicar en el menú
-navLinks.forEach(link => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    const target = document.querySelector(link.getAttribute("href"));
-    if (!target) return;
-    target.scrollIntoView({ behavior: 'smooth' });
-  });
-});
+window.addEventListener("scroll", updateActiveOnScroll);
+window.addEventListener("resize", updateActiveOnScroll);
+document.addEventListener("DOMContentLoaded", updateActiveOnScroll);
 
-
-/* ==========================================================================
-   3. COMUNICACIÓN CON EL IFRAME DEL MAPA
-========================================================================== */
-
-window.addEventListener("message", (event) => {
-  if (event.data === "mapa-visible") {
-    const linkMapa = document.querySelector('.nav a[href="#mapa"]');
-    activateLink(linkMapa);
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const iframeMapa = document.getElementById("iframe-mapa");
-  if (!iframeMapa) return;
-
+// Observador para iframe mapa (solo si existe)
+const iframeMapa = document.getElementById("iframe-mapa");
+if (iframeMapa) {
   iframeMapa.addEventListener("load", () => {
     const iframeDocument = iframeMapa.contentDocument;
     const iframeBody = iframeDocument.body;
 
-    const observerMapa = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          window.postMessage("mapa-visible", "*");
-        }
-      },
-      { threshold: 0.25 }
-    );
+    const observerMapa = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        setActiveLink("mapa");
+      }
+    }, { threshold: 0.25 });
 
     observerMapa.observe(iframeBody);
   });
-});
+}
