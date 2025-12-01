@@ -688,11 +688,6 @@ html {
   margin: 0 0 8px 0;
 }
 
-.footer__institucion strong {
-  color: #ffffff;
-  font-weight: 600;
-}
-
 .footer__institucion-link {
   color: #b8d4d4;
   text-decoration: none;
@@ -703,7 +698,6 @@ html {
 }
 
 .footer__institucion-link:hover {
-  color: #ffffff;
   transform: translateX(5px); 
   text-decoration: none; 
 }
