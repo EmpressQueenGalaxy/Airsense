@@ -57,116 +57,217 @@ showSlide(current);
    AIRSENSE - NAVEGACIÓN ACTIVA 
 ========================================================================== */
 
+/* =========================
+   NAVEGACIÓN ACTIVA ROBUSTA
+   ========================= */
+
 const navLinks = document.querySelectorAll('.nav a');
 const sections = Array.from(navLinks)
   .map(link => document.querySelector(link.getAttribute("href")))
   .filter(Boolean);
 
 function setActiveLink(id) {
+  // solo cambiar si es distinto para evitar repintados
   navLinks.forEach(link => {
     const isActive = link.getAttribute("href") === "#" + id;
-    link.classList.toggle('nav-active', isActive);
-    link.setAttribute('aria-current', isActive ? 'page' : '');
+    if (isActive) {
+      if (!link.classList.contains('nav-active')) {
+        link.classList.add('nav-active');
+        link.setAttribute('aria-current', 'page');
+      }
+    } else {
+      if (link.classList.contains('nav-active')) {
+        link.classList.remove('nav-active');
+        link.removeAttribute('aria-current');
+      }
+    }
   });
 }
 
-// Scroll suave
+/* ---- control de scroll programático ----
+   Al hacer click: marcar inmediatamente y bloquear
+   la lógica automática hasta que el scroll termine.
+*/
+let isProgrammatic = false;
+let programmaticTimer = null;
+const PROGRAMMATIC_LOCK_MS = 700; // ajustar si el scroll tarda más
+
+function cancelProgrammaticLock() {
+  isProgrammatic = false;
+  if (programmaticTimer) {
+    clearTimeout(programmaticTimer);
+    programmaticTimer = null;
+  }
+}
+
+/* Scroll suave al hacer click: marcar inmediatamente y bloquear */
 navLinks.forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
-    const target = document.querySelector(link.getAttribute("href"));
+    const targetSelector = link.getAttribute('href');
+    const target = document.querySelector(targetSelector);
     if (!target) return;
+
+    const id = target.id || targetSelector.replace('#','');
+    // marcar YA (evita que el indicador quede en la anterior)
+    setActiveLink(id);
+
+    // iniciar bloqueo programático
+    isProgrammatic = true;
+    if (programmaticTimer) clearTimeout(programmaticTimer);
+    programmaticTimer = setTimeout(() => {
+      isProgrammatic = false;
+      programmaticTimer = null;
+      updateActiveFromObserverOrTop(); // forzar actualización final
+    }, PROGRAMMATIC_LOCK_MS);
+
+    // hacer scroll suave
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
 
-// Función para calcular la sección más visible (fallback)
-function getMostVisibleSection() {
-  const triggerPos = window.innerHeight * 0.5; // mitad de pantalla
-  let current = sections[0].id;
-  let maxVisible = 0;
-
-  sections.forEach(sec => {
-    const rect = sec.getBoundingClientRect();
-    const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-    if (visibleHeight > maxVisible) {
-      maxVisible = visibleHeight;
-      current = sec.id;
+/* Si el usuario interrumpe (rueda el ratón, toca, usa teclado),
+   cancelamos el bloqueo programático para que recupere control.
+*/
+['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(ev =>
+  window.addEventListener(ev, () => {
+    if (isProgrammatic) {
+      cancelProgrammaticLock();
+      updateActiveFromObserverOrTop();
     }
+  }, { passive: true })
+);
+
+/* ---- IntersectionObserver ----
+   Observa todas las secciones y guarda el intersectionRatio en un mapa.
+   Cuando NO haya bloqueo programático, elegimos la sección con mayor ratio.
+*/
+const ratioMap = new Map(); // section.element -> latest ratio
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    ratioMap.set(entry.target, entry.intersectionRatio);
   });
 
-  // Prioridad al mapa
-  const mapaSection = document.querySelector("#mapa");
-  if (mapaSection) {
-    const rectMapa = mapaSection.getBoundingClientRect();
-    const visibleMapa = Math.min(rectMapa.bottom, window.innerHeight) - Math.max(rectMapa.top, 0);
-    if (visibleMapa > maxVisible) {
-      current = "mapa";
+  // sólo actualizar si no estamos en scroll programático
+  if (!isProgrammatic) {
+    updateActiveFromObserverOrTop();
+  }
+}, { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
+
+sections.forEach(sec => io.observe(sec));
+
+/* ---- Lógica para elegir sección activa ----
+   1) Si hay ratios registrados, elegir la sección con mayor ratio (>= 0.25)
+   2) Si no hay ninguna con ratio suficiente, fallback: la sección cuyo top
+      esté más cerca/por encima de un trigger (10% desde arriba).
+*/
+function getSectionByMaxRatio(minRatio = 0.25) {
+  let best = null;
+  let bestRatio = minRatio;
+  for (const [sec, ratio] of ratioMap.entries()) {
+    if (ratio > bestRatio) {
+      bestRatio = ratio;
+      best = sec;
     }
   }
-
-  return current;
+  return best;
 }
 
-// Actualizar sección activa
-function updateActive() {
-  const id = getMostVisibleSection();
-  setActiveLink(id);
-}
-
-
-// Prioridad absoluta al iframe del mapa
-const iframeMapa = document.getElementById("iframe-mapa");
-if (iframeMapa) {
-  iframeMapa.addEventListener('load', () => {
-    const observerMapa = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) setActiveLink("mapa");
-    }, { threshold: 0.25 });
-    observerMapa.observe(iframeMapa.contentDocument.body);
-  });
-}
-
-function getTopSection() {
-  const triggerPos = window.innerHeight * 0.1; // 10% desde arriba
-  let current = sections[0].id;
-
+function getTopSection(triggerPercent = 0.1) {
+  const trigger = window.innerHeight * triggerPercent;
+  let current = sections[0];
   for (const sec of sections) {
-    const rect = sec.getBoundingClientRect();
-    if (rect.top <= triggerPos + 1) { // un pequeño margen para scroll suave
-      current = sec.id;
+    const r = sec.getBoundingClientRect();
+    if (r.top <= trigger + 1) {
+      current = sec;
     } else {
       break;
     }
   }
-
-  // Prioridad absoluta al mapa
-  const mapaSection = document.querySelector("#mapa");
-  if (mapaSection) {
-    const rectMapa = mapaSection.getBoundingClientRect();
-    if (rectMapa.top <= triggerPos && rectMapa.bottom > 0) {
-      current = "mapa";
-    }
-  }
-
   return current;
 }
 
-// Actualizar sección activa
-function updateActive() {
-  const id = getTopSection();
-  setActiveLink(id);
+function updateActiveFromObserverOrTop() {
+  // prioridad absoluta al mapa si es visible (>0px visible)
+  const mapa = document.querySelector('#mapa');
+  if (mapa) {
+    const r = mapa.getBoundingClientRect();
+    const visibleMapa = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+    if (visibleMapa > 0) {
+      setActiveLink('mapa');
+      return;
+    }
+  }
+
+  // 1) intentar por ratio
+  const byRatio = getSectionByMaxRatio(0.25);
+  if (byRatio) {
+    setActiveLink(byRatio.id);
+    return;
+  }
+
+  // 2) fallback top-based (útil si las secciones son pequeñas)
+  const topSec = getTopSection(0.1);
+  if (topSec) setActiveLink(topSec.id);
 }
 
-// Eventos de scroll y resize
-window.addEventListener('scroll', updateActive);
-window.addEventListener('resize', updateActive);
-document.addEventListener('DOMContentLoaded', updateActive);
+/* También actualizamos periódicamente cuando se redimensiona o scrollea
+   (no es costoso: la función solo cambia si hay diferencia).
+*/
+let scrollUpdateTimer = null;
+function onScrollOrResize() {
+  if (isProgrammatic) {
+    // refrescar el timer de bloqueo para esperar al final del scroll programático
+    if (programmaticTimer) {
+      clearTimeout(programmaticTimer);
+    }
+    programmaticTimer = setTimeout(() => {
+      isProgrammatic = false;
+      programmaticTimer = null;
+      updateActiveFromObserverOrTop();
+    }, PROGRAMMATIC_LOCK_MS);
+    return;
+  }
 
+  // debounce ligero para evitar demasiadas llamadas
+  if (scrollUpdateTimer) clearTimeout(scrollUpdateTimer);
+  scrollUpdateTimer = setTimeout(() => {
+    updateActiveFromObserverOrTop();
+    scrollUpdateTimer = null;
+  }, 80);
+}
 
-// Observador de secciones (para cambios de visibilidad real)
-const observer = new IntersectionObserver(entries => {
-  updateActive(); // fallback con getBoundingClientRect
-}, { threshold: 0.25 });
+window.addEventListener('scroll', onScrollOrResize, { passive: true });
+window.addEventListener('resize', onScrollOrResize);
 
-// Observar todas las secciones
-sections.forEach(sec => observer.observe(sec));
+/* Al cargar la página forzamos una actualización final */
+document.addEventListener('DOMContentLoaded', () => {
+  // limpiar mapa inicial
+  ratioMap.clear();
+  // force resize/scroll handling after layout settle (imagenes/carrusel)
+  setTimeout(updateActiveFromObserverOrTop, 120);
+  setTimeout(updateActiveFromObserverOrTop, 700); // por si hay recursos tardíos
+});
+
+/* Prioridad especial para iframe #mapa (si lo usas dentro de iframe) */
+const iframeMapa = document.getElementById('iframe-mapa');
+if (iframeMapa) {
+  iframeMapa.addEventListener('load', () => {
+    try {
+      const iframeBody = iframeMapa.contentDocument.body;
+      const obs = new IntersectionObserver(entries => {
+        if (entries[0] && entries[0].isIntersecting) {
+          setActiveLink('mapa');
+        } else {
+          // cuando el mapa deja de intersectar, recalcular
+          updateActiveFromObserverOrTop();
+        }
+      }, { threshold: 0.25 });
+      obs.observe(iframeBody);
+    } catch (err) {
+      // si el iframe es cross-origin no se puede acceder al body — usar fallback
+      console.warn('No se puede observar iframe por CORS; fallback activado.');
+    }
+  });
+}
