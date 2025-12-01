@@ -1,12 +1,12 @@
-/* ==========================================================================
+/* ========================================================================== 
    AIRSENSE - LÓGICA DE LA PÁGINA DE INICIO (visor.html)
    ==========================================================================
    Gestiona:
-   1. El carrusel de imágenes y texto de la sección de inicio.
-   2. El resaltado de la navegación principal al hacer scroll (Intersection Observer).
-   ========================================================================== */
+   1. Carrusel de imágenes y texto de la sección de inicio.
+   2. Resaltado de la navegación principal al hacer scroll (unificado y estable).
+========================================================================== */
 
-/* ==========================================================================
+/* ========================================================================== 
    1. CARRUSEL DE INICIO
 ========================================================================== */
 const slides = document.querySelectorAll('.slide');
@@ -54,22 +54,23 @@ setInterval(nextSlide, 6000);
 showSlide(current);
 
 /* ========================================================================== 
-   NAVEGACIÓN ACTIVA UNIFICADA
+   2. NAVEGACIÓN ACTIVA UNIFICADA Y ESTABLE
 ========================================================================== */
 
 // Enlaces del menú
 const navLinks = document.querySelectorAll('.nav a');
 
-// Todas las secciones que corresponden al menú
+// Secciones correspondientes a cada link
 const sections = Array.from(navLinks)
   .map(link => document.querySelector(link.getAttribute("href")))
   .filter(Boolean);
 
-// Función que marca el link activo
+// Función para marcar un link como activo
 function setActiveLink(id) {
   navLinks.forEach(link => {
-    link.classList.toggle('nav-active', link.getAttribute("href") === "#" + id);
-    link.setAttribute('aria-current', link.getAttribute("href") === "#" + id ? "page" : "");
+    const isActive = link.getAttribute("href") === "#" + id;
+    link.classList.toggle('nav-active', isActive);
+    link.setAttribute('aria-current', isActive ? 'page' : '');
   });
 }
 
@@ -83,13 +84,14 @@ navLinks.forEach(link => {
   });
 });
 
-// Detectar sección visible en scroll
+// Función para actualizar el link activo basado en scroll
 function updateActiveOnScroll() {
+  const triggerPos = window.innerHeight * 0.25; // punto de referencia
+
   let current = null;
-  const triggerPos = window.innerHeight * 0.25;
+  let minDistance = Infinity;
 
-  let minDistance = Infinity; // distancia mínima entre el trigger y el top de la sección
-
+  // Detecta la sección más cercana al trigger
   sections.forEach(sec => {
     const rect = sec.getBoundingClientRect();
     const distance = Math.abs(rect.top - triggerPos);
@@ -99,7 +101,7 @@ function updateActiveOnScroll() {
     }
   });
 
-  // Prioridad al mapa si está visible
+  // Prioridad absoluta al mapa si está visible
   const mapaSection = document.querySelector("#mapa");
   if (mapaSection) {
     const rectMapa = mapaSection.getBoundingClientRect();
@@ -111,11 +113,12 @@ function updateActiveOnScroll() {
   if (current) setActiveLink(current);
 }
 
+// Eventos de scroll, resize y carga
 window.addEventListener("scroll", updateActiveOnScroll);
 window.addEventListener("resize", updateActiveOnScroll);
 document.addEventListener("DOMContentLoaded", updateActiveOnScroll);
 
-// Observador para iframe mapa (solo si existe)
+// Observador para iframe del mapa
 const iframeMapa = document.getElementById("iframe-mapa");
 if (iframeMapa) {
   iframeMapa.addEventListener("load", () => {
