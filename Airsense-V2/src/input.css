@@ -203,7 +203,7 @@
 /* --- Contenido de texto superpuesto --- */
 .content {
   position: absolute;
-  top: 65%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
