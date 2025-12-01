@@ -694,6 +694,25 @@ html {
   font-weight: 600;
 }
 
+.footer__institucion-link {
+  color: #b8d4d4;
+  text-decoration: none;
+  font-size: inherit;
+  line-height: inherit;
+  display: inline-block;
+}
+
+.footer__institucion-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.footer__institucion-link:focus {
+  outline: 2px solid #ffeb3b;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 .footer__equipo {
   margin-top: 12px;
   padding-left: 15px;
