@@ -86,11 +86,15 @@ navLinks.forEach(link => {
 // Detectar sección visible en scroll
 function updateActiveOnScroll() {
   let current = null;
-  const triggerPos = window.innerHeight * 0.25; // punto de referencia en la pantalla
+  const triggerPos = window.innerHeight * 0.25;
+
+  let minDistance = Infinity; // distancia mínima entre el trigger y el top de la sección
 
   sections.forEach(sec => {
     const rect = sec.getBoundingClientRect();
-    if (rect.top <= triggerPos && rect.bottom >= triggerPos) {
+    const distance = Math.abs(rect.top - triggerPos);
+    if (distance < minDistance) {
+      minDistance = distance;
       current = sec.getAttribute("id");
     }
   });
