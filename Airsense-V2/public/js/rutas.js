@@ -114,18 +114,6 @@ function updateActive() {
   setActiveLink(id);
 }
 
-// Observador de secciones (para cambios de visibilidad real)
-const observer = new IntersectionObserver(entries => {
-  updateActive(); // fallback con getBoundingClientRect
-}, { threshold: 0.25 });
-
-// Observar todas las secciones
-sections.forEach(sec => observer.observe(sec));
-
-// Eventos de scroll y resize
-window.addEventListener('scroll', updateActive);
-window.addEventListener('resize', updateActive);
-document.addEventListener('DOMContentLoaded', updateActive);
 
 // Prioridad absoluta al iframe del mapa
 const iframeMapa = document.getElementById("iframe-mapa");
@@ -137,3 +125,48 @@ if (iframeMapa) {
     observerMapa.observe(iframeMapa.contentDocument.body);
   });
 }
+
+function getTopSection() {
+  const triggerPos = window.innerHeight * 0.1; // 10% desde arriba
+  let current = sections[0].id;
+
+  for (const sec of sections) {
+    const rect = sec.getBoundingClientRect();
+    if (rect.top <= triggerPos + 1) { // un pequeño margen para scroll suave
+      current = sec.id;
+    } else {
+      break;
+    }
+  }
+
+  // Prioridad absoluta al mapa
+  const mapaSection = document.querySelector("#mapa");
+  if (mapaSection) {
+    const rectMapa = mapaSection.getBoundingClientRect();
+    if (rectMapa.top <= triggerPos && rectMapa.bottom > 0) {
+      current = "mapa";
+    }
+  }
+
+  return current;
+}
+
+// Actualizar sección activa
+function updateActive() {
+  const id = getTopSection();
+  setActiveLink(id);
+}
+
+// Eventos de scroll y resize
+window.addEventListener('scroll', updateActive);
+window.addEventListener('resize', updateActive);
+document.addEventListener('DOMContentLoaded', updateActive);
+
+
+// Observador de secciones (para cambios de visibilidad real)
+const observer = new IntersectionObserver(entries => {
+  updateActive(); // fallback con getBoundingClientRect
+}, { threshold: 0.25 });
+
+// Observar todas las secciones
+sections.forEach(sec => observer.observe(sec));
