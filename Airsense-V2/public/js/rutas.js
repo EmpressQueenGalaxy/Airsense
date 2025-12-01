@@ -92,7 +92,7 @@ function setActiveLink(id) {
 // CONTROL SCROLL PROGRAMÁTICO (clicks)
 let isProgrammatic = false;
 let programmaticTimer = null;
-const PROGRAMMATIC_LOCK_MS = 700;
+const PROGRAMMATIC_LOCK_MS = 200;
 
 function clearProgrammaticLock() {
   isProgrammatic = false;
@@ -122,7 +122,8 @@ navLinks.forEach(link => {
       updateActiveFromObserverOrTop();
     }, PROGRAMMATIC_LOCK_MS);
 
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    target.scrollIntoView({ behavior: 'auto', block: 'start' }); // scroll inmediato
+    window.scrollBy({ top: -20, behavior: 'smooth' }); // ligera transición
   });
 });
 
