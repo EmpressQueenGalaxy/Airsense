@@ -118,13 +118,6 @@
   display: block; /* Visible cuando está activo */
 }
 
-/* Evitar layout shift en el texto del carrusel */
-#slide-text {
-  display: block;
-  min-height: 6rem;      /* ← Altura fija para que no se mueva */
-  transition: opacity .3s ease;
-}
-
 /* --- Capa oscura para legibilidad del texto --- */
 .overlay {
   position: absolute;
