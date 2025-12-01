@@ -70,52 +70,70 @@ function setActiveLink(id) {
   });
 }
 
-// Scroll suave al hacer click
+// Scroll suave
 navLinks.forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
     const target = document.querySelector(link.getAttribute("href"));
     if (!target) return;
-
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
 
-// IntersectionObserver para todas las secciones
-const observer = new IntersectionObserver(entries => {
-  let visibleSection = null;
-  let maxRatio = 0;
+// Función para calcular la sección más visible (fallback)
+function getMostVisibleSection() {
+  const triggerPos = window.innerHeight * 0.5; // mitad de pantalla
+  let current = sections[0].id;
+  let maxVisible = 0;
 
-  entries.forEach(entry => {
-    if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-      maxRatio = entry.intersectionRatio;
-      visibleSection = entry.target;
+  sections.forEach(sec => {
+    const rect = sec.getBoundingClientRect();
+    const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+    if (visibleHeight > maxVisible) {
+      maxVisible = visibleHeight;
+      current = sec.id;
     }
   });
 
-  if (visibleSection) {
-    setActiveLink(visibleSection.id);
+  // Prioridad al mapa
+  const mapaSection = document.querySelector("#mapa");
+  if (mapaSection) {
+    const rectMapa = mapaSection.getBoundingClientRect();
+    const visibleMapa = Math.min(rectMapa.bottom, window.innerHeight) - Math.max(rectMapa.top, 0);
+    if (visibleMapa > maxVisible) {
+      current = "mapa";
+    }
   }
-}, {
-  threshold: Array.from({ length: 101 }, (_, i) => i / 100) // múltiple threshold para máxima precisión
-});
+
+  return current;
+}
+
+// Actualizar sección activa
+function updateActive() {
+  const id = getMostVisibleSection();
+  setActiveLink(id);
+}
+
+// Observador de secciones (para cambios de visibilidad real)
+const observer = new IntersectionObserver(entries => {
+  updateActive(); // fallback con getBoundingClientRect
+}, { threshold: 0.25 });
 
 // Observar todas las secciones
 sections.forEach(sec => observer.observe(sec));
 
+// Eventos de scroll y resize
+window.addEventListener('scroll', updateActive);
+window.addEventListener('resize', updateActive);
+document.addEventListener('DOMContentLoaded', updateActive);
+
 // Prioridad absoluta al iframe del mapa
 const iframeMapa = document.getElementById("iframe-mapa");
 if (iframeMapa) {
-  iframeMapa.addEventListener("load", () => {
-    const iframeBody = iframeMapa.contentDocument.body;
-
+  iframeMapa.addEventListener('load', () => {
     const observerMapa = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        setActiveLink("mapa");
-      }
+      if (entries[0].isIntersecting) setActiveLink("mapa");
     }, { threshold: 0.25 });
-
-    observerMapa.observe(iframeBody);
+    observerMapa.observe(iframeMapa.contentDocument.body);
   });
 }
-
