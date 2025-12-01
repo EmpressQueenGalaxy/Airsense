@@ -136,7 +136,7 @@
   color: white;
   text-align: center;
   max-width: 850px;
-  padding: clamp(1rem, 3vw, 2rem); /* padding escalable */
+  padding: clamp(1rem, 1vw, 1rem); /* padding escalable */
   background-color: transparent; /* opcional, ligera capa para mejorar legibilidad */
   border-radius: 10px;
 }
