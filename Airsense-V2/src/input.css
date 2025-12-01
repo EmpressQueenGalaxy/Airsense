@@ -116,7 +116,6 @@
 
 .nav a {
   display: inline-block; 
-  padding: 0.25rem 0; 
   color: white;
   margin-left: 1rem;
   font-weight: 500;
@@ -699,18 +698,14 @@ html {
   text-decoration: none;
   font-size: inherit;
   line-height: inherit;
-  display: inline-block;
+  display: inline-flex;  
+  flex-direction: column; /* Para que el <strong> y el texto sigan en líneas separadas */
+  gap: 2px;               /* Separación pequeña entre líneas */
 }
 
 .footer__institucion-link:hover {
   color: #ffffff;
   text-decoration: underline;
-}
-
-.footer__institucion-link:focus {
-  outline: 2px solid #ffeb3b;
-  outline-offset: 3px;
-  border-radius: 4px;
 }
 
 .footer__equipo {
