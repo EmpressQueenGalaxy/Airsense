@@ -9,9 +9,10 @@
 // IMPORTACIÓN DE DEPENDENCIAS
 // ==========================================================================
 
-require("dotenv").config(); 
-const { Pool } = require("pg"); 
-const fs = require("fs"); 
+const path = require("node:path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+const { Pool } = require("pg");
+const fs = require("node:fs");
 
 // Verificación del entorno y variables de configuración
 console.log("📁 Ruta actual:", __dirname);

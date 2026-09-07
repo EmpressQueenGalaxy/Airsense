@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0b2d2a"/>
+      <stop offset="1" stop-color="#1d6452"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="80%" cy="15%">
+      <stop stop-color="#c8eb72" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#c8eb72" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <circle cx="950" cy="270" r="175" fill="none" stroke="#c8eb72" stroke-opacity=".35" stroke-width="2"/>
+  <circle cx="950" cy="270" r="115" fill="none" stroke="#c8eb72" stroke-opacity=".5" stroke-width="2"/>
+  <circle cx="950" cy="270" r="48" fill="#c8eb72" fill-opacity=".85"/>
+  <text x="90" y="190" fill="#c8eb72" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="5">VALLE DEL CAUCA · COLOMBIA</text>
+  <text x="90" y="305" fill="#f2f5ed" font-family="Arial, sans-serif" font-size="92" font-weight="800">AirSense</text>
+  <text x="95" y="370" fill="#d9e8dd" font-family="Arial, sans-serif" font-size="34">Datos para entender el aire</text>
+  <text x="95" y="515" fill="#c8eb72" font-family="Arial, sans-serif" font-size="25" font-weight="700">CALIDAD DEL AIRE · MAPAS · DATOS HISTÓRICOS</text>
+</svg>

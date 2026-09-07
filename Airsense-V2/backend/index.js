@@ -10,9 +10,9 @@
    ========================================================================== */
 
 const express = require("express");
-require("dotenv").config();
 const cors = require("cors");
-const path = require("path");
+const path = require("node:path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 const db = require("./basedatos");
 const healthRoutes = require('./health');
 
@@ -52,6 +52,7 @@ const apiHandler = (controller, endpointName = "la ruta") => {
   Maneja todas las rutas y middlewares del servidor*/
 const app = express();
 const PORT = process.env.PORT || 3000; //Usa variable de entorno PORT (producción) o 3000 por defecto 
+const frontendDist = path.join(__dirname, "../frontend/dist");
  
 // ==========================================================================
 // CONFIGURACIÓN DE MIDDLEWARES
@@ -61,18 +62,9 @@ app.use(express.json());                                    //habilita el proces
 app.use('/api/health', healthRoutes);
 
 // ==========================================================================
-// RUTA DE PÁGINA PRINCIPAL
-// ==========================================================================
-// 1. RUTA PRINCIPAL (/)
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/visor.html"));
-});
-
-// ==========================================================================
 // CONFIGURACIÓN DE MIDDLEWARES ESTÁTICOS 
 // ==========================================================================
-
-app.use(express.static(path.join(__dirname, "../public"))); 
+app.use(express.static(frontendDist));
 
 /* ==========================================================================
    ENDPOINTS DE LA API
@@ -325,6 +317,22 @@ app.get('/api/datos', apiHandler(
   "/api/datos"
 ));
 
+// ==========================================================================
+// FRONTEND REACT
+// ==========================================================================
+// Las rutas de la API se registran antes de este fallback para que React no
+// intercepte respuestas JSON.
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    return next();
+  }
+
+  res.sendFile(path.join(frontendDist, "index.html"), (error) => {
+    if (error) {
+      next(error);
+    }
+  });
+});
 
 // ==========================================================================
 // MANEJO DE ERRORES GLOBALES

@@ -54,58 +54,53 @@ AirSense is a web application that visualizes historical air quality data across
     git clone https://github.com/EmpressQueenGalaxy/Airsense.git  
     ```
 
-2.  **Navigate to the project root and install dependencies:**
+2.  **Navigate to the application directory and install dependencies with pnpm:**
     ```bash
-    cd Airsense
-    npm install
-    # Installs dependencies for the main project (including Tailwind if configured at root)
+     cd Airsense/Airsense-V2
+     corepack enable
+     pnpm install
     ```
 
-3.  **Install Tailwind CSS dependencies (if not already installed at root):**
+3.  **Build the React frontend:**
     ```bash
-    # If step 2 didn't install Tailwind dependencies, run this in the project root:
-    npm install -D tailwindcss postcss autoprefixer
-    ```
+     pnpm frontend:build
+     ```
 
-4.  **Initialize Tailwind CSS (if `tailwind.config.js` is missing):**
-    ```bash
-    # Only run if `tailwind.config.js` does not exist in the project root
-    npx tailwindcss init -p
-    ```
-    *Note: The `tailwind.config.js` file should already be present and configured to watch files in `./public/**/*.{html,js}`.*
+4.  **Configure the environment:**
+     ```bash
+     # Create Airsense/Airsense-V2/backend/.env with the database variables below.
+     ```
 
-5.  **Compile the CSS:**
-    *This step generates the `estilo.css` file required by the frontend.*
-    ```bash
-    # Run from the project root (Airsense directory)
-    npx tailwindcss -i ./src/input.css -o ./public/estilo.css --minify
-    ```
+5.  **Start the backend:**
+     ```bash
+     pnpm start
+     ```
 
-6.  **Environment configuration:**
-    - Create a `.env` file **in the `backend` subdirectory** (`Airsense/backend/.env`).
-    - Add your database credentials to the `.env` file:
+6.  **Start the React frontend in another terminal:**
+     ```bash
+     cd Airsense/Airsense-V2
+     pnpm frontend:dev
+     ```
+     Open `http://localhost:5173`. Vite proxies `/api` requests to the backend on port 3000.
+
+7.  **Environment variables:**
+     - Create a `.env` file **in the `backend` subdirectory** (`Airsense/Airsense-V2/backend/.env`).
+     - Add your database credentials. Do not commit real credentials:
 
     ```bash
     # Example .env file content (replace with actual credentials if different)
-    DB_USER=postgres.czcidrooqhaxysxhxqbr
-    DB_PASSWORD=contaminacionaire
-    DB_HOST=aws-1-us-east-2.pooler.supabase.com
+    DB_USER=your_database_user
+    DB_PASSWORD=your_database_password
+    DB_HOST=your_database_host
     DB_NAME=postgres
     DB_PORT=6543
     ```
 
-7.  **Start the development server:**
-    ```bash
-    # Navigate to the backend directory
-    cd backend
-    node index.js
-    # or
-    node --watch index.js # Automatically restarts the server on code changes
-    ```
+The React frontend lives in `Airsense-V2/frontend` and the Express backend in `Airsense-V2/backend`. The root `pnpm build` command builds the React application:
 
-8.  **Open the frontend in your browser:**
-    - The backend server will typically run on `http://localhost:3000` (or another port specified by your `index.js`).
-    - Open your browser and navigate to the URL where the backend server is running (e.g., `http://localhost:3000`).
+```bash
+pnpm frontend:build
+```
   
 ---
 

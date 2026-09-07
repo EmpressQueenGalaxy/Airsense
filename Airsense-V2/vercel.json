@@ -1,15 +1,15 @@
 {
   "version": 2,
+  "buildCommand": "pnpm frontend:build",
+  "outputDirectory": "frontend/dist",
   "builds": [
     { "src": "backend/index.js", "use": "@vercel/node" },
-    { "src": "public/**", "use": "@vercel/static" }
+    { "src": "frontend/dist/**", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/backend/index.js" },
-    { "src": "/(js|images|css)/(.*)", "dest": "/public/$1/$2" },
-    { "src": "/(.*\\.css)", "dest": "/public/$1" },
-    { "src": "/(.*\\.js)", "dest": "/public/$1" },
-    { "src": "/", "dest": "/public/visor.html" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/assets/(.*)", "dest": "/frontend/dist/assets/$1" },
+    { "src": "/(favicon\\.svg|og-image\\.svg|robots\\.txt|sitemap\\.xml)", "dest": "/frontend/dist/$1" },
+    { "src": "/(.*)", "dest": "/frontend/dist/index.html" }
   ]
 }
