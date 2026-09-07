@@ -1,130 +1,158 @@
 # AirSense 🌍💨
 
-**Interactive geospatial viewer for historical air quality data (Valle del Cauca, Colombia — 2011–2023).**
+**Visor geoespacial interactivo de datos históricos de calidad del aire en el Valle del Cauca, Colombia (2011–2023).**
 
----
+## Descripción
 
-## Overview
-AirSense is a web application that visualizes historical air quality data across 10 municipalities of Valle del Cauca. The platform provides an interactive map with monitoring stations, filters by municipality, year, and pollutant, and a color-coded legend aligned with environmental quality standards to help citizens, authorities, researchers, and organizations make informed decisions.
+AirSense organiza registros de calidad del aire para que puedan consultarse de forma clara y contextualizada. La aplicación permite seleccionar un municipio, un año, una estación y un contaminante para consultar su lectura promedio anual, clasificación y estadísticas disponibles.
 
----
+El proyecto está pensado para ciudadanía, autoridades, investigadores y organizaciones interesadas en comprender la información ambiental del territorio.
 
-## Features
-- Interactive map of Valle del Cauca with panning and zoom.
-- Display of monitoring stations as map markers.
-- Filters by municipality, year, and pollutant (contaminant).
-- Color-coded legend to interpret air quality levels.
-- Compound (pollutant) dictionary for non-technical users.
+## Funcionalidades
 
----
+- Interfaz web responsive en español con navegación por secciones.
+- Mapa interactivo basado en Leaflet con estaciones de monitoreo.
+- Consulta guiada por municipio, año, estación y contaminante.
+- Lecturas promedio anuales y clasificación visual de la calidad del aire.
+- Diccionario de contaminantes con símbolos, unidades y tiempos de exposición.
+- Panel de resultados con estación, municipio, año y fuente de los datos.
+- Consulta de ejemplo para explorar la aplicación sin configurar manualmente todos los filtros.
+- Metadatos SEO, Open Graph, datos estructurados, favicon, robots.txt y sitemap.xml.
+- Endpoint protegido de health check para mantener activa la conexión con PostgreSQL/Supabase.
 
-## Tech Stack
-- **Frontend:** HTML, CSS, JavaScript, Leaflet.js, Tailwind CSS
-- **Backend:** Node.js, Express.js  
-- **Database:** PostgreSQL  
-- **Hosting:** Vercel
+## Arquitectura y stack
 
----
+- **Frontend:** React 19, Vite 7, React Leaflet y Leaflet.
+- **Backend:** Node.js y Express 5.
+- **Base de datos:** PostgreSQL, compatible con conexiones SSL de Supabase.
+- **Despliegue:** Vercel (frontend estático y funciones Node.js).
+- **Gestor de paquetes:** pnpm.
 
-## Data Sources
-- Historical datasets: DAGMA, CVC, regional monitoring stations, public community sensors (all public datasets).  
-- Time range: 2011 — 2023.  
-- ~24 monitored chemical compounds across 10 municipalities.
-- **Official Data Source:** [Calidad Del Aire En Colombia - Promedio Anual](https://www.datos.gov.co/Ambiente-y-Desarrollo-Sostenible/Calidad-Del-Aire-En-Colombia-Promedio-Anual-/kekd-7v7h/about_data)
+### Estructura del repositorio
 
----
-
-## Prerequisites (developers)
-> **Note:** Many environment-specific details are currently **Por definir**. This is a placeholder list until the project reaches implementation:
-
-- **Git:** To clone the repository.
-- **Node.js:** Version 18.x or higher (recommended for stability and compatibility with project dependencies).
-- **Access credentials:** A `.env` file with database credentials is required to run the backend. Contact the team for access details.
-- (Optional) PostgreSQL client tools for local queries (if needed).
-
----
-
-## Installation
-
-> **Important for local development:**  
-> This project is optimized for cloud deployment (Vercel/Render). Running it locally requires additional setup steps (like compiling Tailwind CSS) not needed in production.
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/EmpressQueenGalaxy/Airsense.git  
-    ```
-
-2.  **Navigate to the application directory and install dependencies with pnpm:**
-    ```bash
-     cd Airsense/Airsense-V2
-     corepack enable
-     pnpm install
-    ```
-
-3.  **Build the React frontend:**
-    ```bash
-     pnpm frontend:build
-     ```
-
-4.  **Configure the environment:**
-     ```bash
-     # Create Airsense/Airsense-V2/backend/.env with the database variables below.
-     ```
-
-5.  **Start the backend:**
-     ```bash
-     pnpm start
-     ```
-
-6.  **Start the React frontend in another terminal:**
-     ```bash
-     cd Airsense/Airsense-V2
-     pnpm frontend:dev
-     ```
-     Open `http://localhost:5173`. Vite proxies `/api` requests to the backend on port 3000.
-
-7.  **Environment variables:**
-     - Create a `.env` file **in the `backend` subdirectory** (`Airsense/Airsense-V2/backend/.env`).
-     - Add your database credentials. Do not commit real credentials:
-
-    ```bash
-    # Example .env file content (replace with actual credentials if different)
-    DB_USER=your_database_user
-    DB_PASSWORD=your_database_password
-    DB_HOST=your_database_host
-    DB_NAME=postgres
-    DB_PORT=6543
-    ```
-
-The React frontend lives in `Airsense-V2/frontend` and the Express backend in `Airsense-V2/backend`. The root `pnpm build` command builds the React application:
-
-```bash
-pnpm frontend:build
+```text
+.
+├── backend/
+│   ├── basedatos.js       # Conexión y consultas PostgreSQL
+│   ├── health.js          # Health check protegido
+│   └── index.js           # API Express y servidor
+├── frontend/
+│   ├── public/            # Favicon, imagen social, robots y sitemap
+│   └── src/               # Aplicación React y estilos
+├── package.json           # Scripts del proyecto
+├── pnpm-workspace.yaml
+└── vercel.json            # Configuración de despliegue
 ```
-  
----
 
-## Usage (end user)
-- The final product will be a public web page. End users only need to open the deployed URL to:
-  - See the interactive map
-  - Use filters (municipality, year, pollutant)
-  - Read the compound dictionary
-  - Interpret the color legend to assess air quality
+## Datos
 
----
+- Cobertura histórica: 2011–2023.
+- Región: Valle del Cauca, Colombia.
+- Información organizada por municipios, estaciones, contaminantes y tiempos de exposición.
+- Fuente oficial de referencia: [Calidad del Aire en Colombia - Promedio Anual](https://www.datos.gov.co/Ambiente-y-Desarrollo-Sostenible/Calidad-Del-Aire-En-Colombia-Promedio-Anual-/kekd-7v7h/about_data).
+- Los datos consolidados también consideran registros de entidades regionales y estaciones de monitoreo públicas.
 
-## License
-This project is released under the **MIT License**. See the `LICENSE` file for details.
+## Requisitos
 
----
+- Git.
+- Node.js 18 o superior.
+- Corepack habilitado.
+- pnpm.
+- Acceso a una base de datos PostgreSQL con el esquema y los datos de AirSense.
 
-## Authors
-- Andres Lopez  
-- Katherine Lopez  
-- Luz Amelia Ibarguen  
+## Instalación y desarrollo local
+
+1. Clona el repositorio:
+
+   ```bash
+   git clone https://github.com/EmpressQueenGalaxy/Airsense.git
+   cd Airsense
+   ```
+
+2. Instala pnpm y las dependencias:
+
+   ```bash
+   corepack enable
+   pnpm install
+   ```
+
+3. Crea `backend/.env` con las credenciales de PostgreSQL. No guardes credenciales reales en Git:
+
+   ```dotenv
+   DB_USER=tu_usuario
+   DB_PASSWORD=tu_contraseña
+   DB_HOST=tu_host
+   DB_NAME=postgres
+   DB_PORT=6543
+   HEALTH_CHECK_SECRET=un_secreto_para_health_check
+   ```
+
+   El backend intenta conectarse usando SSL, como requiere Supabase, y contempla conexiones locales sin SSL cuando el servidor lo solicita.
+
+4. (Opcional) Configura `frontend/.env` para SEO y una API externa:
+
+   ```dotenv
+   VITE_SITE_URL=https://tu-dominio-publico.com
+   # VITE_API_URL=https://tu-api-publica.com/api
+   ```
+
+   Por defecto, el frontend usa `/api`, por lo que funciona con el proxy local y con las rutas de Vercel.
+
+5. Construye el frontend y arranca el backend:
+
+   ```bash
+   pnpm start
+   ```
+
+   `pnpm start` ejecuta primero `pnpm build` y luego inicia Express en `http://localhost:3000`.
+
+6. Para trabajar con recarga en caliente, usa dos terminales:
+
+   ```bash
+   pnpm frontend:dev
+   ```
+
+   Abre `http://localhost:5173`. Vite redirige las peticiones `/api` al backend cuando se configura el proxy de desarrollo.
+
+## Scripts disponibles
+
+| Comando | Descripción |
+| --- | --- |
+| `pnpm install` | Instala las dependencias del workspace. |
+| `pnpm frontend:dev` | Inicia Vite en modo desarrollo. |
+| `pnpm frontend:build` | Genera la aplicación React en `frontend/dist`. |
+| `pnpm build` | Ejecuta el build del frontend. |
+| `pnpm start` | Construye el frontend e inicia el servidor Express. |
+
+## API principal
+
+Todas las rutas de datos están disponibles bajo `/api`:
+
+- `GET /api/municipios`
+- `GET /api/anios/:id_municipio`
+- `GET /api/estaciones/:id_municipio/:anio`
+- `GET /api/contaminantes/:id_estacion/:anio`
+- `GET /api/datos?estacion=...&anio=...&exposicion=...`
+- `GET /api/diccionario`
+- `GET /api/health?secret=...`
+
+El health check requiere que el valor de `secret` coincida con `HEALTH_CHECK_SECRET` y ejecuta una consulta ligera contra la base de datos.
+
+## Despliegue
+
+El archivo `vercel.json` configura el build del frontend, sirve sus archivos estáticos y redirige `/api/*` a `backend/index.js`. En el proyecto de Vercel deben configurarse las variables de `backend/.env` como variables de entorno del servicio.
+
+## Licencia
+
+Este proyecto se publica bajo la **licencia MIT**. Consulta el archivo `LICENSE` para más información.
+
+## Autores
+
+- Andres Lopez
+- Katherine Lopez
+- Luz Amelia Ibarguen
 - Nicolas Sanchez
 
----
+## Contacto
 
-## Contact
-For questions or collaboration, contact the project team at: **airsenseproyecto@gmail.com*
+Para preguntas o colaboraciones: **airsenseproyecto@gmail.com**
