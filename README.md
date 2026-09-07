@@ -151,7 +151,6 @@ Este proyecto se publica bajo la **licencia MIT**. Consulta el archivo `LICENSE`
 - Andres Lopez
 - Katherine Lopez
 - Luz Amelia Ibarguen
-- Nicolas Sanchez
 
 ## Contacto
 
